@@ -51,15 +51,25 @@ def _build_architecture_narrative(
 
 def _summarize_relationships(repo_map: RepoMap) -> list[str]:
     summaries: list[str] = []
-    for source, target in sorted(repo_map.graph.edges()):
+    prioritized_edges = sorted(
+        repo_map.graph.edges(),
+        key=lambda edge: (
+            _relationship_priority(repo_map.graph.nodes[edge[0]].get("artifact_type", "other")),
+            edge[0],
+            edge[1],
+        ),
+    )
+    for source, target in prioritized_edges:
         source_type = repo_map.graph.nodes[source].get("artifact_type", "other")
         summaries.append(_describe_edge(source, source_type, target))
-    return summaries[:12]
+    return summaries[:20]
 
 
 def _describe_edge(source: str, source_type: str, target: str) -> str:
     if source_type == "ci":
         return f"{source} invokes {target} during automated verification."
+    if source_type == "test":
+        return f"{source} validates {target} as part of the executable contract."
     if source_type == "script":
         return f"{source} launches or orchestrates {target}."
     if source_type == "code":
@@ -112,3 +122,16 @@ def _expand_entrypoints(repo_map: RepoMap) -> list[str]:
         if artifact_type in {"script", "ci"} and node not in entrypoints:
             entrypoints.append(node)
     return _unique_preserve_order(entrypoints)
+
+
+def _relationship_priority(source_type: str) -> int:
+    priorities = {
+        "test": 0,
+        "skill": 1,
+        "prompt": 2,
+        "doc": 3,
+        "ci": 4,
+        "script": 5,
+        "code": 6,
+    }
+    return priorities.get(source_type, 7)

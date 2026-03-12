@@ -30,6 +30,12 @@ def test_support_files_inside_skills_keep_their_real_type() -> None:
     assert doc_artifact.artifact_type is ArtifactType.DOC
 
 
+def test_test_files_classify_as_meaningful_test_artifacts() -> None:
+    artifact = classify_artifact("tests/test_example.py")
+    assert artifact.artifact_type is ArtifactType.TEST
+    assert artifact.is_meaningful is True
+
+
 def test_lockfile_is_not_meaningful_by_default() -> None:
     artifact = classify_artifact("package-lock.json")
     assert artifact.is_meaningful is False

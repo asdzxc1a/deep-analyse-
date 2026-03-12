@@ -49,6 +49,7 @@ def write_dossier(
     )
     _write_file_analysis(
         output_dir / "03-file-analysis",
+        repo_map,
         logic_findings,
         preservation,
         architecture,
@@ -73,6 +74,7 @@ def write_dossier(
 
 def _write_file_analysis(
     output_dir: Path,
+    repo_map,
     logic_findings: list,
     preservation: PreservationReport,
     architecture: ArchitectureSummary,
@@ -88,6 +90,7 @@ def _write_file_analysis(
             output_dir / slug,
             _render_artifact_finding(
                 finding,
+                repo_map,
                 preservation_by_path.get(finding.path),
                 architecture,
                 workflows_by_path.get(finding.path),
@@ -119,12 +122,13 @@ def _render_repo_map(repo_map, meaningful_artifacts: list) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _render_artifact_finding(finding, preservation_decision, architecture: ArchitectureSummary, workflow_finding) -> str:
+def _render_artifact_finding(finding, repo_map, preservation_decision, architecture: ArchitectureSummary, workflow_finding) -> str:
     system_role = _describe_system_role(finding, preservation_decision, architecture)
     preserve_lines = _build_preserve_lines(finding, preservation_decision, architecture, workflow_finding)
     change_lines = _build_change_lines(finding, preservation_decision)
     rebuild_strategy = _build_rebuild_strategy(finding, preservation_decision, workflow_finding)
     first_slice = _build_first_slice(finding, preservation_decision, architecture, workflow_finding)
+    connections = _build_connected_artifacts(finding.path, repo_map)
     lines = [
         f"# {finding.path}",
         "",
@@ -150,6 +154,13 @@ def _render_artifact_finding(finding, preservation_decision, architecture: Archi
     lines.extend(f"- {item}" for item in change_lines)
     lines.extend(["", "## Rebuild Strategy", "", rebuild_strategy, ""])
     lines.extend(["## Suggested First Slice", "", first_slice, ""])
+    lines.extend(["", "## Connected Artifacts", ""])
+    lines.extend(["### Driven By", ""])
+    lines.extend(f"- {item}" for item in connections["driven_by"])
+    lines.extend(["", "### Drives", ""])
+    lines.extend(f"- {item}" for item in connections["drives"])
+    lines.extend(["", "### Validated By", ""])
+    lines.extend(f"- {item}" for item in connections["validated_by"])
     lines.extend(["", "## Reconstruction Notes", "", finding.reconstruction_notes, ""])
     return "\n".join(lines)
 
@@ -304,3 +315,19 @@ def _build_workflow_guidance(finding, preservation_decision) -> list[str]:
     if preservation_decision:
         guidance.append(preservation_decision.strategy_note)
     return guidance
+
+
+def _build_connected_artifacts(path: str, repo_map) -> dict[str, list[str]]:
+    incoming = sorted(repo_map.graph.predecessors(path))
+    outgoing = sorted(repo_map.graph.successors(path))
+    validated_by = [
+        source
+        for source in incoming
+        if repo_map.graph.nodes[source].get("artifact_type") == "test"
+    ]
+    driven_by = [source for source in incoming if source not in validated_by]
+    return {
+        "driven_by": driven_by or ["No explicit incoming links detected"],
+        "drives": outgoing or ["No explicit outgoing links detected"],
+        "validated_by": validated_by or ["No explicit validating artifacts detected"],
+    }

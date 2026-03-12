@@ -17,8 +17,8 @@ def analyze_logic(repo_root: Path, repo_map: RepoMap) -> list[ArtifactFinding]:
         lines = content.splitlines()
         nonempty_lines = [line.strip() for line in lines if line.strip()]
 
-        if artifact.artifact_type is ArtifactType.CODE:
-            findings.append(_analyze_code_artifact(artifact.path, lines, nonempty_lines))
+        if artifact.artifact_type in {ArtifactType.CODE, ArtifactType.TEST}:
+            findings.append(_analyze_code_artifact(artifact.path, artifact.artifact_type, lines, nonempty_lines))
             continue
         if artifact.artifact_type is ArtifactType.SCRIPT:
             findings.append(_analyze_script_artifact(artifact.path, lines, nonempty_lines))
@@ -29,14 +29,24 @@ def analyze_logic(repo_root: Path, repo_map: RepoMap) -> list[ArtifactFinding]:
     return findings
 
 
-def _analyze_code_artifact(path: str, lines: list[str], nonempty_lines: list[str]) -> ArtifactFinding:
+def _analyze_code_artifact(
+    path: str,
+    artifact_type: ArtifactType,
+    lines: list[str],
+    nonempty_lines: list[str],
+) -> ArtifactFinding:
     suffix = PurePosixPath(path).suffix
     if suffix == ".py":
-        return _analyze_python_artifact(path, lines, nonempty_lines)
-    return _analyze_javascript_artifact(path, lines, nonempty_lines)
+        return _analyze_python_artifact(path, artifact_type, lines, nonempty_lines)
+    return _analyze_javascript_artifact(path, artifact_type, lines, nonempty_lines)
 
 
-def _analyze_python_artifact(path: str, lines: list[str], nonempty_lines: list[str]) -> ArtifactFinding:
+def _analyze_python_artifact(
+    path: str,
+    artifact_type: ArtifactType,
+    lines: list[str],
+    nonempty_lines: list[str],
+) -> ArtifactFinding:
     imports = [line.strip() for line in lines if line.strip().startswith(("import ", "from "))]
     function_names = re.findall(r"^\s*def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", "\n".join(lines), flags=re.MULTILINE)
     class_names = re.findall(r"^\s*class\s+([A-Za-z_][A-Za-z0-9_]*)\s*[:(]", "\n".join(lines), flags=re.MULTILINE)
@@ -45,7 +55,7 @@ def _analyze_python_artifact(path: str, lines: list[str], nonempty_lines: list[s
     if '__name__ == "__main__"' in "\n".join(lines):
         key_signals.append("Entry point via __main__ guard.")
 
-    summary = _summarize_python_artifact(path, class_names, function_names, key_signals)
+    summary = _summarize_python_artifact(path, artifact_type, class_names, function_names, key_signals)
     dependencies = _limit_unique(imports)
     failure_modes = [
         f"If imports used by {path} move or disappear, the module will fail before its core logic runs.",
@@ -55,7 +65,7 @@ def _analyze_python_artifact(path: str, lines: list[str], nonempty_lines: list[s
 
     return ArtifactFinding(
         path=path,
-        artifact_type=ArtifactType.CODE,
+        artifact_type=artifact_type,
         summary=summary,
         line_count=len(lines),
         key_signals=_limit_unique(key_signals),
@@ -65,7 +75,12 @@ def _analyze_python_artifact(path: str, lines: list[str], nonempty_lines: list[s
     )
 
 
-def _analyze_javascript_artifact(path: str, lines: list[str], nonempty_lines: list[str]) -> ArtifactFinding:
+def _analyze_javascript_artifact(
+    path: str,
+    artifact_type: ArtifactType,
+    lines: list[str],
+    nonempty_lines: list[str],
+) -> ArtifactFinding:
     content = "\n".join(lines)
     imports = [line.strip() for line in lines if _is_javascript_import(line.strip())]
     function_names = re.findall(r"^\s*function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", content, flags=re.MULTILINE)
@@ -83,7 +98,7 @@ def _analyze_javascript_artifact(path: str, lines: list[str], nonempty_lines: li
     if "require.main === module" in content or "app.listen(" in content or ".listen(" in content:
         key_signals.append("Runtime entrypoint detected.")
 
-    summary = _summarize_javascript_artifact(path, function_names)
+    summary = _summarize_javascript_artifact(path, artifact_type, function_names)
     dependencies = _limit_unique(imports)
     failure_modes = [
         f"If required modules in {path} change shape, startup will fail before request handling begins.",
@@ -96,7 +111,7 @@ def _analyze_javascript_artifact(path: str, lines: list[str], nonempty_lines: li
 
     return ArtifactFinding(
         path=path,
-        artifact_type=ArtifactType.CODE,
+        artifact_type=artifact_type,
         summary=summary,
         line_count=len(lines),
         key_signals=_limit_unique(key_signals),
@@ -159,23 +174,26 @@ def _analyze_fallback_artifact(
 
 def _summarize_python_artifact(
     path: str,
+    artifact_type: ArtifactType,
     class_names: list[str],
     function_names: list[str],
     key_signals: list[str],
 ) -> str:
+    artifact_label = "Python test module" if artifact_type is ArtifactType.TEST else "Python module"
     named_items = [*class_names, *function_names]
     if named_items:
         lead = ", ".join(named_items[:3])
         suffix = " and exposes an executable entrypoint." if "Entry point via __main__ guard." in key_signals else "."
-        return f"Python module at {path} defines {lead}{suffix}"
-    return f"Python module at {path} with limited structural signals."
+        return f"{artifact_label} at {path} defines {lead}{suffix}"
+    return f"{artifact_label} at {path} with limited structural signals."
 
 
-def _summarize_javascript_artifact(path: str, function_names: list[str]) -> str:
+def _summarize_javascript_artifact(path: str, artifact_type: ArtifactType, function_names: list[str]) -> str:
+    artifact_label = "JavaScript test module" if artifact_type is ArtifactType.TEST else "JavaScript module"
     if function_names:
         lead = ", ".join(function_names[:3])
-        return f"JavaScript module at {path} defines {lead} and coordinates runtime startup."
-    return f"JavaScript module at {path} with limited structural signals."
+        return f"{artifact_label} at {path} defines {lead} and coordinates runtime startup."
+    return f"{artifact_label} at {path} with limited structural signals."
 
 
 def _summarize_script_artifact(path: str, lines: list[str], commands: list[str]) -> str:

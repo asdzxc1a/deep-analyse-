@@ -56,13 +56,34 @@ def build_repo_map(repo_root: Path) -> RepoMap:
 def _add_relationship_edges(repo_root: Path, source_path: str, existing_paths: set[str], graph: nx.DiGraph) -> None:
     content = (repo_root / source_path).read_text(encoding="utf-8")
     references = set()
+    references.update(_extract_python_local_refs(source_path, content, existing_paths))
     references.update(_extract_javascript_local_refs(source_path, content, existing_paths))
     references.update(_extract_script_local_refs(source_path, content, existing_paths))
     references.update(_extract_ci_local_refs(source_path, content, existing_paths))
+    references.update(_extract_markdown_local_refs(source_path, content, existing_paths))
+    references.update(_extract_markdown_command_refs(source_path, content, existing_paths))
 
     for target in sorted(references):
         if target != source_path:
             graph.add_edge(source_path, target)
+
+
+def _extract_python_local_refs(source_path: str, content: str, existing_paths: set[str]) -> set[str]:
+    references: set[str] = set()
+    if not source_path.endswith(".py"):
+        return references
+
+    patterns = [
+        r"^\s*from\s+([A-Za-z_][A-Za-z0-9_\.]*)\s+import\s+",
+        r"^\s*import\s+([A-Za-z_][A-Za-z0-9_\.]*)",
+    ]
+    for pattern in patterns:
+        for match in re.findall(pattern, content, flags=re.MULTILINE):
+            module_name = match.split(",", 1)[0].strip()
+            resolved = _resolve_python_module(source_path, module_name, existing_paths)
+            if resolved:
+                references.add(resolved)
+    return references
 
 
 def _extract_javascript_local_refs(source_path: str, content: str, existing_paths: set[str]) -> set[str]:
@@ -118,6 +139,36 @@ def _extract_ci_local_refs(source_path: str, content: str, existing_paths: set[s
     return references
 
 
+def _extract_markdown_local_refs(source_path: str, content: str, existing_paths: set[str]) -> set[str]:
+    references: set[str] = set()
+    if not source_path.endswith((".md", ".txt")):
+        return references
+
+    for existing_path in existing_paths:
+        if existing_path == source_path:
+            continue
+        if existing_path in content:
+            references.add(existing_path)
+    return references
+
+
+def _extract_markdown_command_refs(source_path: str, content: str, existing_paths: set[str]) -> set[str]:
+    references: set[str] = set()
+    if not source_path.endswith((".md", ".txt")):
+        return references
+
+    command_patterns = [
+        r"""(?:^|\s)(?:bash|sh|python|python3|node)\s+([A-Za-z0-9_./-]+\.(?:sh|py|js|ts|tsx))""",
+        r"""(?:^|\s)\./([A-Za-z0-9_./-]+\.(?:sh|py|js|ts|tsx))""",
+    ]
+    for pattern in command_patterns:
+        for match in re.findall(pattern, content, flags=re.MULTILINE):
+            resolved = _resolve_workspace_path(source_path, match, existing_paths)
+            if resolved:
+                references.add(resolved)
+    return references
+
+
 def _resolve_relative_reference(source_path: str, reference: str, existing_paths: set[str]) -> str | None:
     source_parent = Path(source_path).parent
     candidate_base = (source_parent / reference).as_posix()
@@ -132,6 +183,18 @@ def _resolve_workspace_path(source_path: str, reference: str, existing_paths: se
     source_parent = Path(source_path).parent
     candidate_base = (source_parent / reference).as_posix()
     return _choose_existing_path(candidate_base, existing_paths)
+
+
+def _resolve_python_module(source_path: str, module_name: str, existing_paths: set[str]) -> str | None:
+    candidate_base = module_name.replace(".", "/")
+    if candidate_base.startswith("/"):
+        candidate_base = candidate_base.lstrip("/")
+    resolved = _choose_existing_path(candidate_base, existing_paths)
+    if resolved:
+        return resolved
+    source_parent = Path(source_path).parent
+    candidate_from_source = (source_parent / candidate_base).as_posix()
+    return _choose_existing_path(candidate_from_source, existing_paths)
 
 
 def _choose_existing_path(candidate_base: str, existing_paths: set[str]) -> str | None:

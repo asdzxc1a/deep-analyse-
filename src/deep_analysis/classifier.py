@@ -7,6 +7,7 @@ EXCLUDED_NAMES = {"package-lock.json", "pnpm-lock.yaml", "yarn.lock"}
 CODE_SUFFIXES = {".py", ".js", ".ts", ".tsx"}
 DOC_SUFFIXES = {".md", ".txt"}
 SCRIPT_SUFFIXES = {".sh"}
+TEST_SUFFIXES = {".py", ".js", ".ts", ".tsx"}
 
 
 def classify_artifact(path: str) -> Artifact:
@@ -19,6 +20,9 @@ def classify_artifact(path: str) -> Artifact:
         is_meaningful = True
     elif ".github/workflows/" in normalized and pure_path.suffix in {".yml", ".yaml"}:
         artifact_type = ArtifactType.CI
+        is_meaningful = True
+    elif _is_test_artifact(pure_path):
+        artifact_type = ArtifactType.TEST
         is_meaningful = True
     elif pure_path.suffix in CODE_SUFFIXES:
         artifact_type = ArtifactType.CODE
@@ -36,11 +40,23 @@ def classify_artifact(path: str) -> Artifact:
         artifact_type = ArtifactType.OTHER
         is_meaningful = False
 
-    if name in EXCLUDED_NAMES or "node_modules/" in normalized:
+    if name in EXCLUDED_NAMES or "node_modules/" in normalized or "__pycache__/" in normalized:
         is_meaningful = False
 
     return Artifact(
         path=normalized,
         artifact_type=artifact_type,
         is_meaningful=is_meaningful,
+    )
+
+
+def _is_test_artifact(pure_path: PurePosixPath) -> bool:
+    normalized = str(pure_path)
+    name = pure_path.name.lower()
+    if pure_path.suffix not in TEST_SUFFIXES:
+        return False
+    return (
+        ("tests/" in normalized)
+        or name.startswith("test_")
+        or name.endswith((".test.js", ".spec.js", ".test.ts", ".spec.ts", ".test.py", ".spec.py"))
     )

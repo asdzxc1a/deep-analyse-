@@ -5,6 +5,7 @@ Use when reviewing a generated spec before implementation.
 1. Read the spec.
 2. List missing requirements.
 3. Wait for user approval before marking the review complete.
+4. Confirm `src/example.py` still matches the expectations captured in `tests/test_example.py`.
 
 You MUST identify any requirement gaps before approving the document.
 NEVER skip the review loop because the task looks simple.

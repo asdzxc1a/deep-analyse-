@@ -154,16 +154,29 @@ You MUST wait for user approval.
 def test_architecture_and_preservation_use_repo_map() -> None:
     repo_root = Path("tests/fixtures/sample_agent_repo")
     repo_map = build_repo_map(repo_root)
+    assert repo_map.graph.has_edge("README.md", "skills/example/SKILL.md")
+    assert repo_map.graph.has_edge("README.md", "prompts/reviewer-prompt.md")
+    assert repo_map.graph.has_edge("README.md", "scripts/start-example.sh")
+    assert repo_map.graph.has_edge("README.md", "tests/test_example.py")
+    assert repo_map.graph.has_edge("skills/example/SKILL.md", "prompts/reviewer-prompt.md")
+    assert repo_map.graph.has_edge("skills/example/SKILL.md", "scripts/start-example.sh")
+    assert repo_map.graph.has_edge("skills/example/SKILL.md", "src/example.py")
+    assert repo_map.graph.has_edge("prompts/reviewer-prompt.md", "src/example.py")
+    assert repo_map.graph.has_edge("prompts/reviewer-prompt.md", "tests/test_example.py")
+    assert repo_map.graph.has_edge("tests/test_example.py", "src/example.py")
     architecture = analyze_architecture(repo_map)
     preservation = analyze_preservation(repo_root, repo_map)
     assert architecture.component_summaries
     assert architecture.relationship_summaries
     assert architecture.critical_paths
+    assert any("README.md references skills/example/SKILL.md" in item for item in architecture.relationship_summaries)
+    assert any("tests/test_example.py validates src/example.py" in item for item in architecture.relationship_summaries)
     assert preservation.decisions
     decisions = {decision.path: decision for decision in preservation.decisions}
     assert decisions["README.md"].decision == "rewrite-with-differentiation"
     assert decisions["skills/example/SKILL.md"].decision == "rewrite-equivalent"
     assert decisions["src/server.js"].decision == "preserve-core-behavior"
+    assert decisions["tests/test_example.py"].decision == "preserve-core-behavior"
     assert decisions["scripts/start-example.sh"].artifact_role == "behavior-bearing implementation"
     assert decisions["skills/example/SKILL.md"].legal_review == "recommended"
     assert decisions["src/server.js"].confidence == "medium"
@@ -204,6 +217,7 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     assert "Safe To Change" in file_analysis_text
     assert "Rebuild Strategy" in file_analysis_text
     assert "Suggested First Slice" in file_analysis_text
+    assert "Connected Artifacts" in file_analysis_text
     workflow_text = (
         output_dir / "04-workflows-prompts-skills" / "skills-example-skill-md.md"
     ).read_text(encoding="utf-8")
@@ -221,6 +235,13 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     assert "Start with executable or operator-facing entrypoints" in reconstruction_text
     assert "preservation matrix" in reconstruction_text
     assert "architecture page" in reconstruction_text
+    test_analysis_text = (
+        output_dir / "03-file-analysis" / "tests-test-example-py.md"
+    ).read_text(encoding="utf-8")
+    assert "Artifact Type: test" in test_analysis_text
+    assert "Connected Artifacts" in test_analysis_text
+    assert "Drives" in test_analysis_text
+    assert "src/example.py" in test_analysis_text
 
 
 def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
