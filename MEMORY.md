@@ -121,6 +121,7 @@ Today, the system can already do these things in a useful way:
   - human escalation paths
   - human-agent handoffs
 - carry repo-level workflow patterns into the dossier and clone blueprint
+- extract actionable prompt steps from prompt templates whose real instructions live inside fenced blocks
 
 In practical terms, it is already good for:
 - understanding repos like `superpowers`
@@ -150,6 +151,7 @@ Implemented:
 - graph-backed architecture reconstruction from local references, workflow invocations, and script/code links
 - cross-artifact architecture linking for docs, prompts, skills, tests, and implementation files
 - semantic extraction for prompt and skill constraints, approval gates, loops, escalation paths, and reusable patterns
+- prompt-template step extraction for fenced-block prompt bodies
 - repo-level workflow pattern synthesis from repeated cross-file semantics
 - richer preservation analysis with artifact roles, strategy notes, legal-review flags, and confidence labels
 - test- and fixture-aware preservation guidance for verification contracts and harness material
@@ -280,6 +282,18 @@ This matters because the blueprint now tells you:
 - preserve what a test proves
 - allow the rebuilt harness and assertion style to change
 - adapt fixture content to the new system instead of carrying it over blindly
+
+### 12. Prompt-template step extraction improved
+
+Originally prompt pages became thin when the real prompt instructions lived inside fenced blocks.
+
+That is now improved with prompt-aware fenced-block extraction:
+- prompt files can read natural-language template content from fenced sections
+- numbered steps inside prompt bodies are now extracted
+- imperative prompt guidance becomes visible in the dossier
+- non-prompt fenced-block filtering still protects skills/docs from diagram and code noise
+
+This matters because prompt dossier pages now capture the actual operating instructions of prompt templates, not just the framing text around them.
 
 ### 8. Dossier pages became reconstruction-oriented
 
@@ -430,13 +444,19 @@ Analyze the smarter test-and-fixture-preservation slice:
 python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-test-preservation-20260312 --export-skill-pack
 ```
 
+Analyze the prompt-template step-extraction slice:
+
+```bash
+python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-prompt-templates-20260312 --export-skill-pack
+```
+
 ## Fresh Verification Evidence
 
 Most recent verified results:
 
-- `pytest -q` -> `24 passed in 0.15s`
+- `pytest -q` -> `25 passed in 0.17s`
 - local smoke run completed:
-  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-test-preservation-20260312 --export-skill-pack`
+  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-prompt-templates-20260312 --export-skill-pack`
 - remote smoke run completed:
   `python -m deep_analysis.cli analyze https://github.com/obra/superpowers.git /tmp/superpowers-deep-analysis-remote-20260311`
 
@@ -444,15 +464,15 @@ Most recent verified results:
 
 Primary local smoke-run outputs:
 
-- `/tmp/superpowers-test-preservation-20260312/analysis-project`
-- `/tmp/superpowers-test-preservation-20260312/clone-blueprint`
-- `/tmp/superpowers-test-preservation-20260312/skill-pack`
+- `/tmp/superpowers-prompt-templates-20260312/analysis-project`
+- `/tmp/superpowers-prompt-templates-20260312/clone-blueprint`
+- `/tmp/superpowers-prompt-templates-20260312/skill-pack`
 
 Useful example pages:
 
-- `/tmp/superpowers-test-preservation-20260312/clone-blueprint/docs/preservation-matrix.md`
-- `/tmp/superpowers-test-preservation-20260312/clone-blueprint/docs/reconstruction-plan.md`
-- `/tmp/superpowers-test-preservation-20260312/clone-blueprint/docs/workflow-patterns.md`
+- `/tmp/superpowers-prompt-templates-20260312/analysis-project/04-workflows-prompts-skills/skills-subagent-driven-development-implementer-prompt-md.md`
+- `/tmp/superpowers-prompt-templates-20260312/analysis-project/04-workflows-prompts-skills/skills-brainstorming-spec-document-reviewer-prompt-md.md`
+- `/tmp/superpowers-prompt-templates-20260312/analysis-project/04-workflows-prompts-skills/repo-patterns.md`
 
 ## Git State
 
@@ -466,7 +486,7 @@ PR:
 - `https://github.com/asdzxc1a/deep-analyse-/pull/1`
 
 Latest pushed commit before this memory revision:
-- `d341e70` - `Synthesize repo-level workflow patterns`
+- `f73cc00` - `Differentiate test and fixture preservation`
 
 There is one untracked local path left intentionally untouched:
 - `.superpowers/`
@@ -491,7 +511,7 @@ Open /Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system/
 ```
 
 Current recommended next stage:
-- deepen dossier guidance for prompts that currently expose weak step extraction
+- strengthen validation-aware synthesis in architecture critical paths
 
 ## Most Important Files
 
@@ -529,6 +549,7 @@ Current limitations:
 - repo-level pattern synthesis is now useful, but it still groups by deterministic families rather than deeper semantic equivalence
 - preservation decisions are much stronger, but still heuristic rather than truly license-aware or policy-aware
 - test/fixture preservation is now clearer, but fixture detection is still path/name heuristic rather than semantic
+- prompt-template extraction is stronger, but it still uses heuristics and may include some instructional noise from large prompt templates
 - dossier writing is now real, but not yet as deep as line-by-line architectural interpretation
 - there is no long-lived memory or repo history database yet
 - there is no interactive “rebuild with my vision” transformation engine yet
@@ -537,10 +558,10 @@ Current limitations:
 
 If work resumes tomorrow, the strongest next slice is:
 
-1. deepen dossier guidance for prompts that currently expose weak step extraction
-2. strengthen validation-aware synthesis in architecture critical paths
-3. improve repo-level pattern clustering beyond deterministic families
-4. refine fixture detection beyond path/name heuristics
+1. strengthen validation-aware synthesis in architecture critical paths
+2. improve repo-level pattern clustering beyond deterministic families
+3. refine fixture detection beyond path/name heuristics
+4. reduce instructional noise in very large prompt templates
 5. consider language-specific parsers only if heuristics stop producing useful output
 
 If the goal is immediate practical value, start with:
@@ -565,8 +586,8 @@ If the next task is to deepen the analyzer, continue from the current verified b
 - `codex/deep-analysis-system`
 
 If the next task is to inspect current outputs, open:
-- `/tmp/superpowers-test-preservation-20260312/clone-blueprint`
+- `/tmp/superpowers-prompt-templates-20260312/analysis-project`
 
 ## One-Line Session Handoff
 
-We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, made dossier pages reconstruction-oriented with preserve/change boundaries, rebuild strategy, suggested first slices, and architecture-aware rebuild ordering, deepened cross-artifact architecture links so docs, prompts, skills, and tests can participate in the system graph, added repo-level workflow pattern synthesis so repeated operating motifs are captured in the dossier and blueprint, then made preservation guidance smarter for tests and fixtures so contracts and harness material are treated differently, verified it locally with 24 passing tests, and refreshed the `superpowers` outputs on the current PR branch.
+We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, made dossier pages reconstruction-oriented with preserve/change boundaries, rebuild strategy, suggested first slices, and architecture-aware rebuild ordering, deepened cross-artifact architecture links so docs, prompts, skills, and tests can participate in the system graph, added repo-level workflow pattern synthesis so repeated operating motifs are captured in the dossier and blueprint, made preservation guidance smarter for tests and fixtures so contracts and harness material are treated differently, then improved prompt-template extraction so fenced prompt bodies contribute real operational steps to the dossier, verified it locally with 25 passing tests, and refreshed the `superpowers` outputs on the current PR branch.

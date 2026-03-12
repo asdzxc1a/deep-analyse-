@@ -21,7 +21,7 @@ def analyze_workflows(repo_root: Path, repo_map: RepoMap) -> list[WorkflowFindin
 
         file_path = repo_root / artifact.path
         content = file_path.read_text(encoding="utf-8")
-        lines = _extract_analysis_lines(content)
+        lines = _extract_analysis_lines(content, artifact.artifact_type)
 
         trigger_conditions: list[str] = []
         steps: list[str] = []
@@ -51,7 +51,7 @@ def analyze_workflows(repo_root: Path, repo_map: RepoMap) -> list[WorkflowFindin
             decision_gates.extend(_extract_ci_decision_gates(lines))
         else:
             trigger_conditions.extend(_extract_doc_triggers(lines))
-            steps.extend(_extract_doc_steps(lines))
+            steps.extend(_extract_doc_steps(lines, artifact.artifact_type))
 
         hard_constraints = _extract_hard_constraints(lines)
         approval_gates = _extract_approval_gates(lines)
@@ -307,18 +307,25 @@ def _extract_doc_triggers(lines: list[str]) -> list[str]:
     return triggers
 
 
-def _extract_doc_steps(lines: list[str]) -> list[str]:
+def _extract_doc_steps(lines: list[str], artifact_type: ArtifactType) -> list[str]:
     steps: list[str] = []
     for line in lines:
         ordered_step = _extract_ordered_step(line)
         if ordered_step:
             steps.append(ordered_step)
         elif line.startswith("- "):
-            steps.append(line[2:].strip())
+            bullet = line[2:].strip()
+            if artifact_type is ArtifactType.PROMPT:
+                if _looks_like_actionable_prompt_step(bullet):
+                    steps.append(bullet)
+            else:
+                steps.append(bullet)
+        elif artifact_type is ArtifactType.PROMPT and _looks_like_actionable_prompt_step(line):
+            steps.append(line)
     return steps[:12]
 
 
-def _extract_analysis_lines(content: str) -> list[str]:
+def _extract_analysis_lines(content: str, artifact_type: ArtifactType) -> list[str]:
     lines: list[str] = []
     in_fenced_block = False
     for raw_line in content.splitlines():
@@ -326,7 +333,11 @@ def _extract_analysis_lines(content: str) -> list[str]:
         if stripped.startswith("```"):
             in_fenced_block = not in_fenced_block
             continue
-        if in_fenced_block or not stripped:
+        if not stripped:
+            continue
+        if in_fenced_block:
+            if artifact_type is ArtifactType.PROMPT and _looks_like_prompt_template_line(stripped):
+                lines.append(stripped)
             continue
         lines.append(stripped)
     return lines
@@ -334,6 +345,8 @@ def _extract_analysis_lines(content: str) -> list[str]:
 
 def _looks_like_hard_constraint(line: str) -> bool:
     lowered = line.lower()
+    if line.endswith("?"):
+        return False
     return any(
         phrase in lowered
         for phrase in (
@@ -342,6 +355,60 @@ def _looks_like_hard_constraint(line: str) -> bool:
             "required",
             "do not",
             "non-negotiable",
+        )
+    )
+
+
+def _looks_like_prompt_template_line(line: str) -> bool:
+    if not line:
+        return False
+    if line.startswith("[") or line.startswith("- [") or line.startswith("**"):
+        return False
+    if any(token in line for token in ("->", "{", "}", "[]", "();")):
+        return False
+    if _extract_ordered_step(line):
+        return True
+    if line.startswith(("- ", "#", "##", "###")):
+        return True
+    lowered = line.lower()
+    return lowered.startswith(
+        (
+            "you are ",
+            "if ",
+            "when ",
+            "once ",
+            "ask ",
+            "confirm ",
+            "implement ",
+            "write ",
+            "verify ",
+            "report ",
+            "work ",
+            "keep ",
+            "human ",
+            "agent ",
+        )
+    )
+
+
+def _looks_like_actionable_prompt_step(line: str) -> bool:
+    lowered = line.lower()
+    if line.endswith("?") or lowered.startswith(("if ", "human ", "agent ", "status:")):
+        return False
+    return lowered.startswith(
+        (
+            "ask ",
+            "confirm ",
+            "implement ",
+            "write ",
+            "verify ",
+            "commit ",
+            "report ",
+            "follow ",
+            "keep ",
+            "review ",
+            "use ",
+            "run ",
         )
     )
 

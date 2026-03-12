@@ -114,6 +114,20 @@ def test_workflow_analysis_extracts_prompt_semantics() -> None:
     assert "iterative review loop" in prompt_finding.reusable_patterns
 
 
+def test_workflow_analysis_extracts_steps_from_prompt_template_fenced_block() -> None:
+    repo_root = Path("tests/fixtures/sample_agent_repo")
+    repo_map = build_repo_map(repo_root)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    prompt_finding = next(f for f in workflow_findings if f.path == "prompts/implementer-prompt.md")
+    assert "Ask clarifying questions before starting if anything is unclear." in prompt_finding.steps
+    assert "Implement exactly what the task specifies." in prompt_finding.steps
+    assert "Write tests for the required behavior." in prompt_finding.steps
+    assert "Verify the implementation works." in prompt_finding.steps
+    assert any("escalate" in item.lower() for item in prompt_finding.escalation_paths)
+    assert prompt_finding.human_role == "Human reviews the implementation report."
+    assert prompt_finding.agent_role == "Agent executes the implementation workflow."
+
+
 def test_repo_workflow_pattern_synthesis_aggregates_repeated_semantics() -> None:
     repo_root = Path("tests/fixtures/sample_agent_repo")
     repo_map = build_repo_map(repo_root)
@@ -267,6 +281,12 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     assert "preservation matrix" in reconstruction_text
     assert "architecture page" in reconstruction_text
     assert "repo workflow patterns" in reconstruction_text
+    prompt_page_text = (
+        output_dir / "04-workflows-prompts-skills" / "prompts-implementer-prompt-md.md"
+    ).read_text(encoding="utf-8")
+    assert "Implement exactly what the task specifies." in prompt_page_text
+    assert "Write tests for the required behavior." in prompt_page_text
+    assert "Report back with the changed files." in prompt_page_text
     test_analysis_text = (
         output_dir / "03-file-analysis" / "tests-test-example-py.md"
     ).read_text(encoding="utf-8")
