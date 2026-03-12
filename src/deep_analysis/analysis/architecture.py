@@ -7,4 +7,12 @@ def analyze_architecture(repo_map: RepoMap) -> ArchitectureSummary:
         f"{subsystem}: {len(paths)} artifact(s)"
         for subsystem, paths in sorted(repo_map.subsystems.items())
     ]
-    return ArchitectureSummary(component_summaries=component_summaries)
+    narrative = (
+        "The repository is organized around top-level subsystems discovered during cartography. "
+        "Entrypoints highlight the files most likely to define usage, behavior, and orchestration."
+    )
+    return ArchitectureSummary(
+        component_summaries=component_summaries,
+        entrypoints=repo_map.entrypoints,
+        narrative=narrative,
+    )

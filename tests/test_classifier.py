@@ -23,6 +23,13 @@ def test_skill_markdown_classifies_as_skill() -> None:
     assert artifact.is_meaningful is True
 
 
+def test_support_files_inside_skills_keep_their_real_type() -> None:
+    code_artifact = classify_artifact("skills/brainstorming/scripts/index.js")
+    doc_artifact = classify_artifact("skills/brainstorming/visual-companion.md")
+    assert code_artifact.artifact_type is ArtifactType.CODE
+    assert doc_artifact.artifact_type is ArtifactType.DOC
+
+
 def test_lockfile_is_not_meaningful_by_default() -> None:
     artifact = classify_artifact("package-lock.json")
     assert artifact.is_meaningful is False

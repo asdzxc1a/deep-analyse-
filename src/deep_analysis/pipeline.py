@@ -38,8 +38,15 @@ def run_analysis_pipeline(repo_url_or_path: str, output_root: Path, export_skill
     blueprint_dir = output_root / "clone-blueprint"
     skill_pack_dir = output_root / "skill-pack" if export_skill_pack else None
 
-    all_findings = list(logic_findings) + list(workflow_findings) + [architecture]
-    write_dossier(analysis_project_dir, workspace.source_repo_path.name, repo_map, all_findings)
+    write_dossier(
+        analysis_project_dir,
+        workspace.source_repo_path.name,
+        repo_map,
+        logic_findings,
+        workflow_findings,
+        architecture,
+        preservation,
+    )
     write_blueprint_repo(blueprint_dir, workspace.source_repo_path.name, preservation.decisions)
 
     if skill_pack_dir is not None:

@@ -29,14 +29,23 @@ class RepoProfile(BaseModel):
 
 class ArtifactFinding(BaseModel):
     path: str
+    artifact_type: ArtifactType
     summary: str
+    line_count: int
+    key_signals: list[str]
+    dependencies: list[str]
+    failure_modes: list[str]
     reconstruction_notes: str
 
 
 class WorkflowFinding(BaseModel):
     path: str
+    summary: str
     trigger_conditions: list[str]
     steps: list[str]
+    decision_gates: list[str] = []
+    human_role: str | None = None
+    agent_role: str | None = None
 
 
 class PreservationDecision(BaseModel):
@@ -57,6 +66,8 @@ class BlueprintPlan(BaseModel):
 
 class ArchitectureSummary(BaseModel):
     component_summaries: list[str]
+    entrypoints: list[str] = []
+    narrative: str = ""
 
 
 class PreservationReport(BaseModel):
