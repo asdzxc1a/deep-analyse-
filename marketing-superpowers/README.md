@@ -53,6 +53,16 @@ This repo preserves the strongest structural rules from `superpowers`:
 - verification before claiming readiness
 - escalation when age, safety, identity, or strategic clarity are at risk
 
+## Creator Position
+
+The creator position is:
+- funny
+- wild
+- full of personality
+- built on the contrast between tomboy energy and high-fashion looks
+
+Every system decision should strengthen that identity rather than dilute it into generic fashion content.
+
 ## Content Strategy Shape
 
 The vertical system is built around four content buckets:
