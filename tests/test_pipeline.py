@@ -5,6 +5,7 @@ from deep_analysis.analysis.workflows import analyze_workflows
 from deep_analysis.analysis.logic import analyze_logic
 from deep_analysis.analysis.preservation import analyze_preservation
 from deep_analysis.cartography import build_repo_map
+from deep_analysis.synthesis.dossier import write_dossier
 
 
 def test_logic_analysis_explains_meaningful_skill_file() -> None:
@@ -30,3 +31,10 @@ def test_architecture_and_preservation_use_repo_map() -> None:
     preservation = analyze_preservation(repo_root, repo_map)
     assert architecture.component_summaries
     assert preservation.decisions
+
+
+def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
+    output_dir = tmp_path / "analysis-project"
+    write_dossier(output_dir=output_dir, repo_name="sample", repo_map=None, findings=[])
+    assert (output_dir / "01-source-profile").exists()
+    assert (output_dir / "03-file-analysis").exists()
