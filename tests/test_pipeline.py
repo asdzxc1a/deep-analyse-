@@ -5,6 +5,7 @@ from deep_analysis.analysis.workflows import analyze_workflows
 from deep_analysis.analysis.logic import analyze_logic
 from deep_analysis.analysis.preservation import analyze_preservation
 from deep_analysis.cartography import build_repo_map
+from deep_analysis.pipeline import run_analysis_pipeline
 from deep_analysis.synthesis.blueprint import write_blueprint_repo
 from deep_analysis.synthesis.dossier import write_dossier
 
@@ -47,3 +48,13 @@ def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
     assert (blueprint_dir / "docs" / "preservation-matrix.md").exists()
     assert (blueprint_dir / "starter-src").exists()
     assert (blueprint_dir / "starter-tests").exists()
+
+
+def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> None:
+    result = run_analysis_pipeline(
+        repo_url_or_path="tests/fixtures/sample_agent_repo",
+        output_root=tmp_path,
+        export_skill_pack=False,
+    )
+    assert (result.analysis_project_dir / "01-source-profile").exists()
+    assert (result.blueprint_dir / "docs" / "preservation-matrix.md").exists()
