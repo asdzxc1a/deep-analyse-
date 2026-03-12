@@ -664,3 +664,54 @@ If the next task is to inspect current outputs, open:
 ## One-Line Session Handoff
 
 We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, made dossier pages reconstruction-oriented with preserve/change boundaries, rebuild strategy, suggested first slices, and architecture-aware rebuild ordering, deepened cross-artifact architecture links so docs, prompts, skills, and tests can participate in the system graph, added repo-level workflow pattern synthesis so repeated operating motifs are captured in the dossier and blueprint, made preservation guidance smarter for tests and fixtures so contracts and harness material are treated differently, improved prompt-template extraction so fenced prompt bodies contribute real operational steps to the dossier, added validation-aware architecture output and reconstruction guidance, verified it locally with 25 passing tests, and brought the repo to a coherent, usable v1 on the current PR branch.
+
+## Marketing-Superpowers Worktree Status
+
+There is now a separate feature worktree for the first vertical built on top of the deep-analysis-system research:
+
+- worktree: `/Users/dmytrnewaimastery/.config/superpowers/worktrees/deep-analysis-system/codex-fashion-creator-growth-system`
+- branch: `codex/fashion-creator-growth-system`
+
+This worktree contains `marketing-superpowers/`, which is the first practical domain build that uses the reconstruction and translation work as a foundation.
+
+Current status in that worktree:
+- creator-growth vertical exists
+- doctrine, six core skills, prompts, examples, and deterministic checks exist
+- live strategy pack for the fashion creator account exists
+- cold-audience concept board exists
+- scripted shooting boards exist
+- the 2-week production board now maps directly to scripted boards and shoot blocks
+
+Most important files in the worktree:
+- `marketing-superpowers/doctrine/fashion-creator-doctrine.md`
+- `marketing-superpowers/strategy/live-fashion-creator-strategy-spec.md`
+- `marketing-superpowers/strategy/account/creator-profile.md`
+- `marketing-superpowers/strategy/account/content-pillars.md`
+- `marketing-superpowers/strategy/account/series-library.md`
+- `marketing-superpowers/strategy/account/platform-strategy.md`
+- `marketing-superpowers/strategy/account/first-2-week-plan.md`
+- `marketing-superpowers/strategy/account/cold-audience-concept-board-v1.md`
+- `marketing-superpowers/strategy/account/production-board-weeks-1-2.md`
+- `marketing-superpowers/strategy/account/scripted-shooting-boards-top-5.md`
+- `marketing-superpowers/tests/run-skill-checks.sh`
+- `marketing-superpowers/tests/run-strategy-pack-checks.sh`
+
+Latest creator-system slice:
+- `docs/specs/2026-03-12-scripted-shooting-boards-design.md`
+- `docs/plans/2026-03-12-scripted-shooting-boards.md`
+
+Verified commands in the worktree:
+
+```bash
+cd "/Users/dmytrnewaimastery/.config/superpowers/worktrees/deep-analysis-system/codex-fashion-creator-growth-system"
+source .venv/bin/activate
+pytest -q
+bash marketing-superpowers/tests/run-skill-checks.sh
+bash marketing-superpowers/tests/run-strategy-pack-checks.sh
+```
+
+Current best restart prompt for the creator work:
+
+```text
+Open /Users/dmytrnewaimastery/.config/superpowers/worktrees/deep-analysis-system/codex-fashion-creator-growth-system/MEMORY.md and continue from the marketing-superpowers worktree state.
+```

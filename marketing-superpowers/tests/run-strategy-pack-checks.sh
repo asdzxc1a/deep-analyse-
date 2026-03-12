@@ -11,6 +11,9 @@ required_files=(
   "$ROOT/series-library.md"
   "$ROOT/platform-strategy.md"
   "$ROOT/first-2-week-plan.md"
+  "$ROOT/production-board-weeks-1-2.md"
+  "$ROOT/cold-audience-concept-board-v1.md"
+  "$ROOT/scripted-shooting-boards-top-5.md"
 )
 
 for file in "${required_files[@]}"; do
@@ -41,5 +44,14 @@ assert_contains "$ROOT/platform-strategy.md" "YouTube: attachment and authority 
 assert_contains "$ROOT/first-2-week-plan.md" "Week 1"
 assert_contains "$ROOT/first-2-week-plan.md" "Week 2"
 assert_contains "$ROOT/first-2-week-plan.md" "attitude moment"
+assert_contains "$ROOT/cold-audience-concept-board-v1.md" "interrupt"
+assert_contains "$ROOT/cold-audience-concept-board-v1.md" "luxury payoff"
+assert_contains "$ROOT/production-board-weeks-1-2.md" "Shoot Block"
+assert_contains "$ROOT/production-board-weeks-1-2.md" "Board Reference"
+assert_contains "$ROOT/scripted-shooting-boards-top-5.md" "Opening Line"
+assert_contains "$ROOT/scripted-shooting-boards-top-5.md" "First 3 Seconds"
+assert_contains "$ROOT/scripted-shooting-boards-top-5.md" "Shot List"
+assert_contains "$ROOT/scripted-shooting-boards-top-5.md" "Edit Rhythm"
+assert_contains "$ROOT/scripted-shooting-boards-top-5.md" "Platform Variation"
 
 echo "Strategy pack checks passed"
