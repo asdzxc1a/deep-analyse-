@@ -62,6 +62,42 @@ Each analysis run should create:
 - differentiation notes
 - migration notes
 
+## What The System Can Do So Far
+
+Today, the system can already do these things in a useful way:
+
+- analyze one repo at a time from a local path or GitHub URL
+- classify meaningful artifacts across skills, prompts, docs, CI, code, and shell scripts
+- generate a real `analysis-project` dossier instead of placeholder folders
+- generate a real `clone-blueprint` repo skeleton with preservation guidance
+- export a reusable `skill-pack`
+- produce file-by-file analysis pages for meaningful artifacts
+- extract workflow steps, trigger conditions, and decision gates
+- extract prompt and skill semantics such as:
+  - hard constraints
+  - approval gates
+  - review loops
+  - escalation paths
+  - reusable operating patterns
+- analyze Python, JavaScript, and shell files with file-type-specific logic extraction
+- reconstruct local architecture relationships from:
+  - workflow command references
+  - shell invocations
+  - local JS imports/requires
+- generate architecture pages with:
+  - meaningful subsystem summaries
+  - entrypoints
+  - relationship summaries
+  - critical paths
+
+In practical terms, it is already good for:
+- understanding repos like `superpowers`
+- locating the main operating rules of a prompt/skill system
+- mapping executable glue between scripts, code, and workflows
+- producing a starting blueprint for rebuilding the system with your own vision
+
+It is not finished yet, but it is already beyond MVP scaffolding and can produce genuinely useful analysis outputs.
+
 ## Current Implementation Status
 
 The system is no longer just scaffold output. It now generates real dossier pages and workflow pages.
@@ -275,6 +311,28 @@ Latest pushed commit at the time of the previous memory revision:
 
 There is one untracked local path left intentionally untouched:
 - `.superpowers/`
+
+## Resume After Restart
+
+If you restart Codex and want to continue from this exact point, use this repo and this memory file first:
+
+- repo: `/Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system`
+- memory file: `MEMORY.md`
+
+Recommended restart prompt:
+
+```text
+Open /Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system/MEMORY.md and continue from there.
+```
+
+If you want to resume the current development frontier specifically, use:
+
+```text
+Open /Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system/MEMORY.md, inspect the latest state, and continue with the next recommended stage.
+```
+
+Current recommended next stage:
+- preservation analysis with stronger rationale and future license/strategy awareness
 
 ## Most Important Files
 
