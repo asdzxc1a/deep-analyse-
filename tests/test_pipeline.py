@@ -5,6 +5,7 @@ from deep_analysis.analysis.workflows import analyze_workflows
 from deep_analysis.analysis.logic import analyze_logic
 from deep_analysis.analysis.preservation import analyze_preservation
 from deep_analysis.cartography import build_repo_map
+from deep_analysis.synthesis.blueprint import write_blueprint_repo
 from deep_analysis.synthesis.dossier import write_dossier
 
 
@@ -38,3 +39,11 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     write_dossier(output_dir=output_dir, repo_name="sample", repo_map=None, findings=[])
     assert (output_dir / "01-source-profile").exists()
     assert (output_dir / "03-file-analysis").exists()
+
+
+def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
+    blueprint_dir = tmp_path / "clone-blueprint"
+    write_blueprint_repo(blueprint_dir=blueprint_dir, repo_name="sample", preservation_decisions=[])
+    assert (blueprint_dir / "docs" / "preservation-matrix.md").exists()
+    assert (blueprint_dir / "starter-src").exists()
+    assert (blueprint_dir / "starter-tests").exists()
