@@ -55,7 +55,11 @@ class WorkflowFinding(BaseModel):
 
 class PreservationDecision(BaseModel):
     path: str
+    artifact_role: str
     decision: str
+    strategy_note: str
+    legal_review: str
+    confidence: str
     rationale: str
 
 

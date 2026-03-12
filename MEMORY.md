@@ -89,12 +89,18 @@ Today, the system can already do these things in a useful way:
   - entrypoints
   - relationship summaries
   - critical paths
+- generate preservation matrices with:
+  - role-aware decisions
+  - strategy notes
+  - legal-review flags
+  - confidence labels
 
 In practical terms, it is already good for:
 - understanding repos like `superpowers`
 - locating the main operating rules of a prompt/skill system
 - mapping executable glue between scripts, code, and workflows
 - producing a starting blueprint for rebuilding the system with your own vision
+- showing which artifacts should be differentiated, rewritten, preserved, or reviewed before reuse
 
 It is not finished yet, but it is already beyond MVP scaffolding and can produce genuinely useful analysis outputs.
 
@@ -116,6 +122,7 @@ Implemented:
 - file-type-specific code and script analysis for Python, JavaScript, and shell artifacts
 - graph-backed architecture reconstruction from local references, workflow invocations, and script/code links
 - semantic extraction for prompt and skill constraints, approval gates, loops, escalation paths, and reusable patterns
+- richer preservation analysis with artifact roles, strategy notes, legal-review flags, and confidence labels
 
 ## Important Fixes Made
 
@@ -203,6 +210,28 @@ This also includes a semantic parsing fix discovered during smoke testing:
 - ignore fenced code and diagram blocks during workflow semantic extraction
 - keep DOT and code examples from polluting approval gates and review loops
 
+### 7. Preservation analysis deepened
+
+Originally preservation analysis mostly used three generic buckets with short rationales.
+
+That is now improved with:
+- role-aware artifact classification
+- richer decision categories
+- strategy notes for rebuild behavior
+- legal-review workflow flags
+- heuristic confidence labels
+- a more actionable preservation matrix in the clone blueprint
+
+Current decision vocabulary:
+- `rewrite-with-differentiation`
+- `rewrite-equivalent`
+- `preserve-core-behavior`
+- `preserve-with-review`
+
+Important boundary:
+- the system still does not provide legal advice
+- the legal-review field is a workflow signal for cautious reuse, not a legal conclusion
+
 ## Principles We Followed
 
 These were the working principles during design and implementation:
@@ -224,6 +253,7 @@ Process principles used in this session:
 - treat smoke-run output quality issues as real bugs, not just polish
 - improve architecture pages only when the smoke-run output becomes materially more useful for reconstruction
 - improve workflow pages only when extracted semantics reflect real operating rules rather than diagram noise
+- keep preservation decisions explicit about uncertainty instead of pretending heuristics are legal certainty
 
 ## Verified Commands
 
@@ -270,13 +300,19 @@ Analyze the prompt/skill semantics slice:
 python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-semantics-20260312-v2 --export-skill-pack
 ```
 
+Analyze the preservation-analysis slice:
+
+```bash
+python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-preservation-20260312 --export-skill-pack
+```
+
 ## Fresh Verification Evidence
 
 Most recent verified results:
 
 - `pytest -q` -> `22 passed in 0.16s`
 - local smoke run completed:
-  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-semantics-20260312-v2 --export-skill-pack`
+  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-preservation-20260312 --export-skill-pack`
 - remote smoke run completed:
   `python -m deep_analysis.cli analyze https://github.com/obra/superpowers.git /tmp/superpowers-deep-analysis-remote-20260311`
 
@@ -284,16 +320,15 @@ Most recent verified results:
 
 Primary local smoke-run outputs:
 
-- `/tmp/superpowers-semantics-20260312-v2/analysis-project`
-- `/tmp/superpowers-semantics-20260312-v2/clone-blueprint`
-- `/tmp/superpowers-semantics-20260312-v2/skill-pack`
+- `/tmp/superpowers-preservation-20260312/analysis-project`
+- `/tmp/superpowers-preservation-20260312/clone-blueprint`
+- `/tmp/superpowers-preservation-20260312/skill-pack`
 
 Useful example pages:
 
-- `/tmp/superpowers-semantics-20260312-v2/analysis-project/04-workflows-prompts-skills/skills-brainstorming-skill-md.md`
-- `/tmp/superpowers-semantics-20260312-v2/analysis-project/04-workflows-prompts-skills/skills-subagent-driven-development-implementer-prompt-md.md`
-- `/tmp/superpowers-semantics-20260312-v2/analysis-project/05-architecture/README.md`
-- `/tmp/superpowers-semantics-20260312-v2/clone-blueprint/docs/preservation-matrix.md`
+- `/tmp/superpowers-preservation-20260312/analysis-project/04-workflows-prompts-skills/skills-brainstorming-skill-md.md`
+- `/tmp/superpowers-preservation-20260312/analysis-project/05-architecture/README.md`
+- `/tmp/superpowers-preservation-20260312/clone-blueprint/docs/preservation-matrix.md`
 
 ## Git State
 
@@ -307,7 +342,7 @@ PR:
 - `https://github.com/asdzxc1a/deep-analyse-/pull/1`
 
 Latest pushed commit at the time of the previous memory revision:
-- `c651155` - `Reconstruct architecture relationships in dossiers`
+- `2270817` - `Refresh project memory after semantic extraction`
 
 There is one untracked local path left intentionally untouched:
 - `.superpowers/`
@@ -332,7 +367,7 @@ Open /Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system/
 ```
 
 Current recommended next stage:
-- preservation analysis with stronger rationale and future license/strategy awareness
+- make dossier pages more reconstruction-oriented, not just descriptive
 
 ## Most Important Files
 
@@ -366,7 +401,7 @@ Current limitations:
 - dependencies extraction is better for code and shell files, but still not semantic dependency tracing
 - architecture synthesis now reconstructs local graph edges, but it is still not a full call graph or semantic runtime model
 - workflow semantics are much stronger, but reusable pattern extraction is still label-based rather than cross-repo mining
-- preservation decisions are rule-based, not license-aware or strategy-aware
+- preservation decisions are much stronger, but still heuristic rather than truly license-aware or policy-aware
 - dossier writing is now real, but not yet as deep as line-by-line architectural interpretation
 - there is no long-lived memory or repo history database yet
 - there is no interactive “rebuild with my vision” transformation engine yet
@@ -375,10 +410,10 @@ Current limitations:
 
 If work resumes tomorrow, the strongest next slice is:
 
-1. improve preservation analysis with stronger rationale and future license awareness
-2. make dossier pages more reconstruction-oriented, not just descriptive
-3. add higher-confidence architecture relationships for docs, prompts, and tests
-4. improve reusable pattern synthesis across multiple workflow artifacts
+1. make dossier pages more reconstruction-oriented, not just descriptive
+2. add higher-confidence architecture relationships for docs, prompts, and tests
+3. improve reusable pattern synthesis across multiple workflow artifacts
+4. add smarter preservation handling for tests and fixtures vs production artifacts
 5. consider language-specific parsers only if heuristics stop producing useful output
 
 If the goal is immediate practical value, start with:
@@ -403,8 +438,8 @@ If the next task is to deepen the analyzer, continue from the current verified b
 - `codex/deep-analysis-system`
 
 If the next task is to inspect current outputs, open:
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/analysis-project`
+- `/tmp/superpowers-preservation-20260312/analysis-project`
 
 ## One-Line Session Handoff
 
-We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, then deepened prompt and skill semantic extraction with constraints, approval gates, loops, escalation paths, and reusable patterns, verified it locally with 22 passing tests, and refreshed the `superpowers` dossier outputs on the current PR branch.
+We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, then upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, verified it locally with 22 passing tests, and refreshed the `superpowers` blueprint outputs on the current PR branch.

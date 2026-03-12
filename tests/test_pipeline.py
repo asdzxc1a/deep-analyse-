@@ -160,6 +160,14 @@ def test_architecture_and_preservation_use_repo_map() -> None:
     assert architecture.relationship_summaries
     assert architecture.critical_paths
     assert preservation.decisions
+    decisions = {decision.path: decision for decision in preservation.decisions}
+    assert decisions["README.md"].decision == "rewrite-with-differentiation"
+    assert decisions["skills/example/SKILL.md"].decision == "rewrite-equivalent"
+    assert decisions["src/server.js"].decision == "preserve-core-behavior"
+    assert decisions["scripts/start-example.sh"].artifact_role == "behavior-bearing implementation"
+    assert decisions["skills/example/SKILL.md"].legal_review == "recommended"
+    assert decisions["src/server.js"].confidence == "medium"
+    assert decisions["README.md"].strategy_note
 
 
 def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
@@ -222,6 +230,10 @@ def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
     )
     assert "skills/example/SKILL.md" in preservation_text
     assert "rewrite-equivalent" in preservation_text
+    assert "Role" in preservation_text
+    assert "Legal Review" in preservation_text
+    assert "Confidence" in preservation_text
+    assert "Strategy Note" in preservation_text
 
 
 def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> None:
