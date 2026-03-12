@@ -68,6 +68,8 @@ class ArchitectureSummary(BaseModel):
     component_summaries: list[str]
     entrypoints: list[str] = []
     narrative: str = ""
+    relationship_summaries: list[str] = []
+    critical_paths: list[str] = []
 
 
 class PreservationReport(BaseModel):

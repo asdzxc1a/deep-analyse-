@@ -116,6 +116,8 @@ def test_architecture_and_preservation_use_repo_map() -> None:
     architecture = analyze_architecture(repo_map)
     preservation = analyze_preservation(repo_root, repo_map)
     assert architecture.component_summaries
+    assert architecture.relationship_summaries
+    assert architecture.critical_paths
     assert preservation.decisions
 
 
@@ -189,6 +191,8 @@ def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> N
         encoding="utf-8"
     )
     assert "Entry Points" in architecture_text
+    assert "Relationships" in architecture_text
+    assert "Critical Paths" in architecture_text
 
 
 def test_write_skill_pack_creates_reusable_analysis_workflow(tmp_path: Path) -> None:

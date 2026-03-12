@@ -151,6 +151,10 @@ def _render_architecture(architecture: ArchitectureSummary) -> str:
     lines.extend(f"- {summary}" for summary in architecture.component_summaries)
     lines.extend(["", "## Entry Points", ""])
     lines.extend(f"- {entrypoint}" for entrypoint in architecture.entrypoints or ["None"])
+    lines.extend(["", "## Relationships", ""])
+    lines.extend(f"- {summary}" for summary in architecture.relationship_summaries or ["None"])
+    lines.extend(["", "## Critical Paths", ""])
+    lines.extend(f"- {path}" for path in architecture.critical_paths or ["None"])
     return "\n".join(lines) + "\n"
 
 

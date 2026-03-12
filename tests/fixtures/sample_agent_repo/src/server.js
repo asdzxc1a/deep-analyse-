@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require("node:fs");
+const { resolvePort } = require("./runtime");
 
 function buildApp() {
   const app = express();
@@ -9,7 +10,7 @@ function buildApp() {
   return app;
 }
 
-function startServer(port = process.env.PORT || 3000) {
+function startServer(port = resolvePort()) {
   const app = buildApp();
   fs.mkdirSync("logs", { recursive: true });
   return app.listen(port, () => {
