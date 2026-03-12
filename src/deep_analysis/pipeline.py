@@ -5,6 +5,7 @@ from deep_analysis.analysis.architecture import analyze_architecture
 from deep_analysis.analysis.logic import analyze_logic
 from deep_analysis.analysis.preservation import analyze_preservation
 from deep_analysis.analysis.workflows import analyze_workflows
+from deep_analysis.analysis.workflows import synthesize_repo_workflow_patterns
 from deep_analysis.cartography import build_repo_map
 from deep_analysis.git_utils import prepare_repo_workspace
 from deep_analysis.synthesis.blueprint import write_blueprint_repo
@@ -24,6 +25,7 @@ def run_analysis_pipeline(repo_url_or_path: str, output_root: Path, export_skill
     repo_map = build_repo_map(workspace.source_repo_path)
     logic_findings = analyze_logic(workspace.source_repo_path, repo_map)
     workflow_findings = analyze_workflows(workspace.source_repo_path, repo_map)
+    workflow_patterns = synthesize_repo_workflow_patterns(workflow_findings)
     architecture = analyze_architecture(repo_map)
     preservation = analyze_preservation(workspace.source_repo_path, repo_map)
 
@@ -44,10 +46,16 @@ def run_analysis_pipeline(repo_url_or_path: str, output_root: Path, export_skill
         repo_map,
         logic_findings,
         workflow_findings,
+        workflow_patterns,
         architecture,
         preservation,
     )
-    write_blueprint_repo(blueprint_dir, workspace.source_repo_path.name, preservation.decisions)
+    write_blueprint_repo(
+        blueprint_dir,
+        workspace.source_repo_path.name,
+        preservation.decisions,
+        workflow_patterns,
+    )
 
     if skill_pack_dir is not None:
         write_skill_pack(skill_pack_dir)

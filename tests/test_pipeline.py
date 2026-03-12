@@ -2,6 +2,7 @@ from pathlib import Path
 
 from deep_analysis.analysis.architecture import analyze_architecture
 from deep_analysis.analysis.workflows import analyze_workflows
+from deep_analysis.analysis.workflows import synthesize_repo_workflow_patterns
 from deep_analysis.analysis.logic import analyze_logic
 from deep_analysis.analysis.preservation import analyze_preservation
 from deep_analysis.cartography import build_repo_map
@@ -113,6 +114,22 @@ def test_workflow_analysis_extracts_prompt_semantics() -> None:
     assert "iterative review loop" in prompt_finding.reusable_patterns
 
 
+def test_repo_workflow_pattern_synthesis_aggregates_repeated_semantics() -> None:
+    repo_root = Path("tests/fixtures/sample_agent_repo")
+    repo_map = build_repo_map(repo_root)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    patterns = synthesize_repo_workflow_patterns(workflow_findings)
+    pattern_names = {pattern.name for pattern in patterns}
+    assert "human approval gate" in pattern_names
+    assert "iterative review loop" in pattern_names
+    assert "human escalation path" in pattern_names
+    assert "human-agent handoff" in pattern_names
+    approval_pattern = next(pattern for pattern in patterns if pattern.name == "human approval gate")
+    assert "skills/example/SKILL.md" in approval_pattern.evidence_artifacts
+    assert "prompts/reviewer-prompt.md" in approval_pattern.evidence_artifacts
+    assert approval_pattern.reconstruction_note
+
+
 def test_workflow_analysis_ignores_fenced_code_blocks(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     skill_dir = repo_root / "skills" / "example"
@@ -191,6 +208,7 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     workflow_findings = analyze_workflows(repo_root, repo_map)
     architecture = analyze_architecture(repo_map)
     preservation = analyze_preservation(repo_root, repo_map)
+    workflow_patterns = synthesize_repo_workflow_patterns(workflow_findings)
 
     write_dossier(
         output_dir=output_dir,
@@ -198,6 +216,7 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
         repo_map=repo_map,
         logic_findings=logic_findings,
         workflow_findings=workflow_findings,
+        workflow_patterns=workflow_patterns,
         architecture=architecture,
         preservation=preservation,
     )
@@ -229,12 +248,20 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     assert "Escalation Paths" in workflow_text
     assert "Reusable Patterns" in workflow_text
     assert "Rebuild Guidance" in workflow_text
+    repo_patterns_text = (
+        output_dir / "04-workflows-prompts-skills" / "repo-patterns.md"
+    ).read_text(encoding="utf-8")
+    assert "Repo Workflow Patterns" in repo_patterns_text
+    assert "human approval gate" in repo_patterns_text
+    assert "Evidence Artifacts" in repo_patterns_text
+    assert "skills/example/SKILL.md" in repo_patterns_text
     reconstruction_text = (output_dir / "07-reconstruction-plan" / "README.md").read_text(
         encoding="utf-8"
     )
     assert "Start with executable or operator-facing entrypoints" in reconstruction_text
     assert "preservation matrix" in reconstruction_text
     assert "architecture page" in reconstruction_text
+    assert "repo workflow patterns" in reconstruction_text
     test_analysis_text = (
         output_dir / "03-file-analysis" / "tests-test-example-py.md"
     ).read_text(encoding="utf-8")
@@ -249,13 +276,17 @@ def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
     repo_root = Path("tests/fixtures/sample_agent_repo")
     repo_map = build_repo_map(repo_root)
     preservation = analyze_preservation(repo_root, repo_map)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    workflow_patterns = synthesize_repo_workflow_patterns(workflow_findings)
 
     write_blueprint_repo(
         blueprint_dir=blueprint_dir,
         repo_name="sample",
         preservation_decisions=preservation.decisions,
+        workflow_patterns=workflow_patterns,
     )
     assert (blueprint_dir / "docs" / "preservation-matrix.md").exists()
+    assert (blueprint_dir / "docs" / "workflow-patterns.md").exists()
     assert (blueprint_dir / "starter-src").exists()
     assert (blueprint_dir / "starter-tests").exists()
     preservation_text = (blueprint_dir / "docs" / "preservation-matrix.md").read_text(
@@ -267,6 +298,11 @@ def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
     assert "Legal Review" in preservation_text
     assert "Confidence" in preservation_text
     assert "Strategy Note" in preservation_text
+    workflow_pattern_text = (blueprint_dir / "docs" / "workflow-patterns.md").read_text(
+        encoding="utf-8"
+    )
+    assert "human approval gate" in workflow_pattern_text
+    assert "skills/example/SKILL.md" in workflow_pattern_text
 
 
 def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> None:
@@ -277,7 +313,9 @@ def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> N
     )
     assert (result.analysis_project_dir / "01-source-profile").exists()
     assert (result.blueprint_dir / "docs" / "preservation-matrix.md").exists()
+    assert (result.blueprint_dir / "docs" / "workflow-patterns.md").exists()
     assert (result.analysis_project_dir / "05-architecture" / "README.md").exists()
+    assert (result.analysis_project_dir / "04-workflows-prompts-skills" / "repo-patterns.md").exists()
     architecture_text = (result.analysis_project_dir / "05-architecture" / "README.md").read_text(
         encoding="utf-8"
     )

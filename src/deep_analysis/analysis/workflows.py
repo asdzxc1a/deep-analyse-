@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 from deep_analysis.cartography import RepoMap
-from deep_analysis.models import ArtifactType, WorkflowFinding
+from deep_analysis.models import ArtifactType, RepoWorkflowPattern, WorkflowFinding
 
 
 def analyze_workflows(repo_root: Path, repo_map: RepoMap) -> list[WorkflowFinding]:
@@ -88,6 +88,56 @@ def analyze_workflows(repo_root: Path, repo_map: RepoMap) -> list[WorkflowFindin
             )
 
     return findings
+
+
+def synthesize_repo_workflow_patterns(workflow_findings: list[WorkflowFinding]) -> list[RepoWorkflowPattern]:
+    pattern_specs = [
+        (
+            "guardrailed workflow",
+            lambda finding: bool(finding.hard_constraints),
+            "Multiple workflow artifacts impose explicit non-negotiable constraints before execution can proceed.",
+            "Preserve hard boundaries and required checks early in the rebuilt workflow layer so safety rules remain structural, not optional.",
+        ),
+        (
+            "human approval gate",
+            lambda finding: bool(finding.approval_gates),
+            "The repo repeatedly requires human approval before a workflow can advance or finish.",
+            "Keep visible approval checkpoints in the rebuilt system so human review remains part of normal operation.",
+        ),
+        (
+            "iterative review loop",
+            lambda finding: bool(finding.review_loops),
+            "Multiple artifacts describe repeating review cycles until approval or completion criteria are satisfied.",
+            "Implement the smallest viable review loop early so the rebuilt workflow preserves iterative correction instead of one-shot execution.",
+        ),
+        (
+            "human escalation path",
+            lambda finding: bool(finding.escalation_paths),
+            "The repo expects blocked, ambiguous, or overlong workflows to escalate back to a human operator.",
+            "Keep an explicit escalation path in the rebuild so exceptional cases do not disappear into silent automation failures.",
+        ),
+        (
+            "human-agent handoff",
+            lambda finding: bool(finding.human_role and finding.agent_role),
+            "The repo repeatedly separates human approval responsibilities from agent execution responsibilities.",
+            "Preserve clear human-versus-agent responsibilities so the rebuilt system keeps the same operating contract.",
+        ),
+    ]
+
+    patterns: list[RepoWorkflowPattern] = []
+    for name, matcher, summary, reconstruction_note in pattern_specs:
+        evidence = [finding.path for finding in workflow_findings if matcher(finding)]
+        if len(evidence) < 2:
+            continue
+        patterns.append(
+            RepoWorkflowPattern(
+                name=name,
+                summary=summary,
+                evidence_artifacts=evidence,
+                reconstruction_note=reconstruction_note,
+            )
+        )
+    return patterns
 
 
 def _workflow_summary(path: str, artifact_type: ArtifactType, steps: list[str]) -> str:

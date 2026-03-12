@@ -23,6 +23,7 @@ def write_dossier(
     repo_map,
     logic_findings: list,
     workflow_findings: list,
+    workflow_patterns: list,
     architecture: ArchitectureSummary,
     preservation: PreservationReport,
 ) -> None:
@@ -55,12 +56,17 @@ def write_dossier(
         architecture,
         workflow_findings,
     )
-    _write_workflow_analysis(output_dir / "04-workflows-prompts-skills", workflow_findings, preservation)
+    _write_workflow_analysis(
+        output_dir / "04-workflows-prompts-skills",
+        workflow_findings,
+        workflow_patterns,
+        preservation,
+    )
     write_text(output_dir / "05-architecture" / "README.md", _render_architecture(architecture))
     write_text(output_dir / "06-preservation-boundaries" / "README.md", _render_preservation(preservation))
     write_text(
         output_dir / "07-reconstruction-plan" / "README.md",
-        _render_reconstruction_plan(repo_name, logic_findings, workflow_findings, architecture),
+        _render_reconstruction_plan(repo_name, logic_findings, workflow_findings, workflow_patterns, architecture),
     )
     write_text(
         output_dir / "08-clone-blueprint" / "README.md",
@@ -99,13 +105,22 @@ def _write_file_analysis(
     write_text(output_dir / "README.md", "\n".join(index_lines) + "\n")
 
 
-def _write_workflow_analysis(output_dir: Path, workflow_findings: list, preservation: PreservationReport) -> None:
+def _write_workflow_analysis(
+    output_dir: Path,
+    workflow_findings: list,
+    workflow_patterns: list,
+    preservation: PreservationReport,
+) -> None:
     index_lines = ["# Workflows, Prompts, and Skills", ""]
     preservation_by_path = {decision.path: decision for decision in preservation.decisions}
+    if workflow_patterns:
+        index_lines.append("- [repo-patterns](./repo-patterns.md)")
     for finding in workflow_findings:
         slug = safe_slug(finding.path) + ".md"
         index_lines.append(f"- [{finding.path}](./{slug})")
         write_text(output_dir / slug, _render_workflow_finding(finding, preservation_by_path.get(finding.path)))
+    if workflow_patterns:
+        write_text(output_dir / "repo-patterns.md", _render_repo_workflow_patterns(workflow_patterns))
     write_text(output_dir / "README.md", "\n".join(index_lines) + "\n")
 
 
@@ -227,10 +242,16 @@ def _render_reconstruction_plan(
     repo_name: str,
     logic_findings: list,
     workflow_findings: list,
+    workflow_patterns: list,
     architecture: ArchitectureSummary,
 ) -> str:
     entrypoint_list = ", ".join(architecture.entrypoints[:3]) if architecture.entrypoints else "documented operator entrypoints"
     critical_path = architecture.critical_paths[0] if architecture.critical_paths else "Use the architecture page to recover the highest-leverage execution path."
+    pattern_line = (
+        f"   Preserve the repo workflow patterns captured in 04-workflows-prompts-skills/repo-patterns.md ({len(workflow_patterns)} synthesized pattern(s)).\n"
+        if workflow_patterns
+        else ""
+    )
     return (
         f"# Reconstruction Plan\n\n"
         f"Target repo: {repo_name}\n\n"
@@ -238,11 +259,30 @@ def _render_reconstruction_plan(
         f"   Prioritize: {entrypoint_list}.\n"
         "2. Recreate the workflow layer next so approvals, review loops, and operator expectations exist before broad implementation.\n"
         f"   This repo currently has {len(workflow_findings)} workflow-bearing artifact(s).\n"
+        f"{pattern_line}"
         "3. Use the architecture page to rebuild dependencies in a system-aware order instead of file-by-file drift.\n"
         f"   First critical path: {critical_path}\n"
         "4. Apply the preservation matrix before carrying language, prompts, or implementation details into the blueprint repo.\n"
         f"   This repo currently has {len(logic_findings)} meaningful artifact(s) to rebuild against those boundaries.\n"
     )
+
+
+def _render_repo_workflow_patterns(workflow_patterns: list) -> str:
+    lines = ["# Repo Workflow Patterns", ""]
+    for pattern in workflow_patterns:
+        lines.extend(
+            [
+                f"## {pattern.name}",
+                "",
+                pattern.summary,
+                "",
+                "### Evidence Artifacts",
+                "",
+            ]
+        )
+        lines.extend(f"- {artifact}" for artifact in pattern.evidence_artifacts)
+        lines.extend(["", "### Reconstruction Note", "", pattern.reconstruction_note, ""])
+    return "\n".join(lines)
 
 
 def _describe_system_role(finding, preservation_decision, architecture: ArchitectureSummary) -> str:

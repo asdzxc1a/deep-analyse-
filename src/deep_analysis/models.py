@@ -53,6 +53,13 @@ class WorkflowFinding(BaseModel):
     agent_role: str | None = None
 
 
+class RepoWorkflowPattern(BaseModel):
+    name: str
+    summary: str
+    evidence_artifacts: list[str]
+    reconstruction_note: str
+
+
 class PreservationDecision(BaseModel):
     path: str
     artifact_role: str
