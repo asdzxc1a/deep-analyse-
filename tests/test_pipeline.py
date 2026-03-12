@@ -200,8 +200,10 @@ def test_architecture_and_preservation_use_repo_map() -> None:
     assert architecture.component_summaries
     assert architecture.relationship_summaries
     assert architecture.critical_paths
+    assert architecture.validation_paths
     assert any("README.md references skills/example/SKILL.md" in item for item in architecture.relationship_summaries)
     assert any("tests/test_example.py validates src/example.py" in item for item in architecture.relationship_summaries)
+    assert any("tests/test_example.py -> src/example.py" in path for path in architecture.validation_paths)
     assert preservation.decisions
     decisions = {decision.path: decision for decision in preservation.decisions}
     assert decisions["README.md"].decision == "rewrite-with-differentiation"
@@ -281,6 +283,7 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     assert "preservation matrix" in reconstruction_text
     assert "architecture page" in reconstruction_text
     assert "repo workflow patterns" in reconstruction_text
+    assert "validation path" in reconstruction_text
     prompt_page_text = (
         output_dir / "04-workflows-prompts-skills" / "prompts-implementer-prompt-md.md"
     ).read_text(encoding="utf-8")
@@ -354,6 +357,7 @@ def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> N
     assert "Entry Points" in architecture_text
     assert "Relationships" in architecture_text
     assert "Critical Paths" in architecture_text
+    assert "Validation Paths" in architecture_text
 
 
 def test_write_skill_pack_creates_reusable_analysis_workflow(tmp_path: Path) -> None:

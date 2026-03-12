@@ -9,13 +9,15 @@ def analyze_architecture(repo_map: RepoMap) -> ArchitectureSummary:
     component_summaries = _summarize_meaningful_components(repo_map)
     relationship_summaries = _summarize_relationships(repo_map)
     critical_paths = _derive_critical_paths(repo_map, entrypoints)
-    narrative = _build_architecture_narrative(repo_map, relationship_summaries, critical_paths)
+    validation_paths = _derive_validation_paths(repo_map)
+    narrative = _build_architecture_narrative(repo_map, relationship_summaries, critical_paths, validation_paths)
     return ArchitectureSummary(
         component_summaries=component_summaries,
         entrypoints=entrypoints,
         narrative=narrative,
         relationship_summaries=relationship_summaries,
         critical_paths=critical_paths,
+        validation_paths=validation_paths,
     )
 
 
@@ -33,15 +35,21 @@ def _build_architecture_narrative(
     repo_map: RepoMap,
     relationship_summaries: list[str],
     critical_paths: list[str],
+    validation_paths: list[str],
 ) -> str:
     subsystem_count = len(repo_map.subsystems)
     edge_count = repo_map.graph.number_of_edges()
     if relationship_summaries and critical_paths:
+        validation_clause = (
+            f" The repo also exposes {len(validation_paths)} validation path(s) that show how tests and CI prove correctness."
+            if validation_paths
+            else ""
+        )
         return (
             f"The repository is organized into {subsystem_count} top-level subsystem(s) with "
             f"{edge_count} inferred architecture relationship(s). Entrypoints identify operator-facing "
             "or executable surfaces, while the critical paths capture the main orchestration flows "
-            "that need to be preserved during reconstruction."
+            f"that need to be preserved during reconstruction.{validation_clause}"
         )
     return (
         "The repository is organized around top-level subsystems discovered during cartography. "
@@ -87,6 +95,20 @@ def _derive_critical_paths(repo_map: RepoMap, entrypoints: list[str]) -> list[st
         if len(longest_path) > 1:
             critical_paths.append(" -> ".join(longest_path))
     return _unique_preserve_order(critical_paths)[:6]
+
+
+def _derive_validation_paths(repo_map: RepoMap) -> list[str]:
+    validation_paths: list[str] = []
+    for node, attrs in sorted(repo_map.graph.nodes(data=True)):
+        artifact_type = attrs.get("artifact_type")
+        if artifact_type not in {"test", "ci"}:
+            continue
+        if repo_map.graph.out_degree(node) == 0:
+            continue
+        longest_path = _longest_reachable_path(repo_map.graph, node)
+        if len(longest_path) > 1:
+            validation_paths.append(" -> ".join(longest_path))
+    return _unique_preserve_order(validation_paths)[:8]
 
 
 def _longest_reachable_path(graph: nx.DiGraph, start: str) -> list[str]:

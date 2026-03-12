@@ -228,6 +228,8 @@ def _render_architecture(architecture: ArchitectureSummary) -> str:
     lines.extend(f"- {summary}" for summary in architecture.relationship_summaries or ["None"])
     lines.extend(["", "## Critical Paths", ""])
     lines.extend(f"- {path}" for path in architecture.critical_paths or ["None"])
+    lines.extend(["", "## Validation Paths", ""])
+    lines.extend(f"- {path}" for path in architecture.validation_paths or ["None"])
     return "\n".join(lines) + "\n"
 
 
@@ -247,6 +249,7 @@ def _render_reconstruction_plan(
 ) -> str:
     entrypoint_list = ", ".join(architecture.entrypoints[:3]) if architecture.entrypoints else "documented operator entrypoints"
     critical_path = architecture.critical_paths[0] if architecture.critical_paths else "Use the architecture page to recover the highest-leverage execution path."
+    validation_path = architecture.validation_paths[0] if architecture.validation_paths else "Use the validation paths section to rebuild the first proof-of-correctness flow."
     pattern_line = (
         f"   Preserve the repo workflow patterns captured in 04-workflows-prompts-skills/repo-patterns.md ({len(workflow_patterns)} synthesized pattern(s)).\n"
         if workflow_patterns
@@ -262,6 +265,7 @@ def _render_reconstruction_plan(
         f"{pattern_line}"
         "3. Use the architecture page to rebuild dependencies in a system-aware order instead of file-by-file drift.\n"
         f"   First critical path: {critical_path}\n"
+        f"   First validation path: {validation_path}\n"
         "4. Apply the preservation matrix before carrying language, prompts, or implementation details into the blueprint repo.\n"
         f"   This repo currently has {len(logic_findings)} meaningful artifact(s) to rebuild against those boundaries.\n"
     )

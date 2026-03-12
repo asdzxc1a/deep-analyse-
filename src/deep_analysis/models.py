@@ -86,6 +86,7 @@ class ArchitectureSummary(BaseModel):
     narrative: str = ""
     relationship_summaries: list[str] = []
     critical_paths: list[str] = []
+    validation_paths: list[str] = []
 
 
 class PreservationReport(BaseModel):
