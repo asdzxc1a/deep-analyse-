@@ -53,3 +53,11 @@ class DossierSection(BaseModel):
 class BlueprintPlan(BaseModel):
     repo_name: str
     next_steps: list[str]
+
+
+class ArchitectureSummary(BaseModel):
+    component_summaries: list[str]
+
+
+class PreservationReport(BaseModel):
+    decisions: list[PreservationDecision]

@@ -1,7 +1,9 @@
 from pathlib import Path
 
+from deep_analysis.analysis.architecture import analyze_architecture
 from deep_analysis.analysis.workflows import analyze_workflows
 from deep_analysis.analysis.logic import analyze_logic
+from deep_analysis.analysis.preservation import analyze_preservation
 from deep_analysis.cartography import build_repo_map
 
 
@@ -19,3 +21,12 @@ def test_workflow_analysis_extracts_trigger_and_steps() -> None:
     finding = workflow_findings[0]
     assert finding.trigger_conditions
     assert finding.steps
+
+
+def test_architecture_and_preservation_use_repo_map() -> None:
+    repo_root = Path("tests/fixtures/sample_agent_repo")
+    repo_map = build_repo_map(repo_root)
+    architecture = analyze_architecture(repo_map)
+    preservation = analyze_preservation(repo_root, repo_map)
+    assert architecture.component_summaries
+    assert preservation.decisions
