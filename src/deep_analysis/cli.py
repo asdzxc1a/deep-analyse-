@@ -4,6 +4,7 @@ import typer
 
 from deep_analysis.cartography import build_repo_map
 from deep_analysis.git_utils import prepare_repo_workspace
+from deep_analysis.synthesis.skill_pack import write_skill_pack
 
 
 app = typer.Typer(name="deep-analysis", no_args_is_help=True)
@@ -22,7 +23,9 @@ def analyze(repo_url: str, output_dir: str, export_skill_pack: bool = False) -> 
 @app.command("export-skill-pack")
 def export_skill_pack(source_dir: str, output_dir: str) -> None:
     """Export the reusable analysis skill pack from an existing analysis run."""
-    raise NotImplementedError("Skill-pack export not wired yet")
+    del source_dir
+    write_skill_pack(Path(output_dir))
+    typer.echo(f"Skill pack written to {output_dir}")
 
 
 if __name__ == "__main__":
