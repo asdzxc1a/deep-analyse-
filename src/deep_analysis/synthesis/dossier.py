@@ -136,6 +136,16 @@ def _render_workflow_finding(finding) -> str:
     if finding.decision_gates:
         lines.extend(["", "## Decision Gates", ""])
         lines.extend(f"- {gate}" for gate in finding.decision_gates)
+    lines.extend(["", "## Hard Constraints", ""])
+    lines.extend(f"- {item}" for item in finding.hard_constraints or ["None"])
+    lines.extend(["", "## Approval Gates", ""])
+    lines.extend(f"- {item}" for item in finding.approval_gates or ["None"])
+    lines.extend(["", "## Review Loops", ""])
+    lines.extend(f"- {item}" for item in finding.review_loops or ["None"])
+    lines.extend(["", "## Escalation Paths", ""])
+    lines.extend(f"- {item}" for item in finding.escalation_paths or ["None"])
+    lines.extend(["", "## Reusable Patterns", ""])
+    lines.extend(f"- {item}" for item in finding.reusable_patterns or ["None"])
     if finding.human_role or finding.agent_role:
         lines.extend(["", "## Roles", ""])
         if finding.human_role:

@@ -44,6 +44,11 @@ class WorkflowFinding(BaseModel):
     trigger_conditions: list[str]
     steps: list[str]
     decision_gates: list[str] = []
+    hard_constraints: list[str] = []
+    approval_gates: list[str] = []
+    review_loops: list[str] = []
+    escalation_paths: list[str] = []
+    reusable_patterns: list[str] = []
     human_role: str | None = None
     agent_role: str | None = None
 

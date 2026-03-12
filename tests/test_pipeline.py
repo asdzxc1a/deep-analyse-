@@ -89,25 +89,66 @@ env PORT="$PORT" node index.js > logs/app.log 2>&1 &
 def test_workflow_analysis_extracts_trigger_and_steps() -> None:
     repo_map = build_repo_map(Path("tests/fixtures/sample_agent_repo"))
     workflow_findings = analyze_workflows(Path("tests/fixtures/sample_agent_repo"), repo_map)
-    finding = workflow_findings[0]
+    finding = next(f for f in workflow_findings if f.path == "skills/example/SKILL.md")
     assert finding.trigger_conditions
     assert finding.steps
+    assert finding.hard_constraints
+    assert finding.approval_gates
+    assert finding.review_loops
+    assert finding.escalation_paths
+    assert finding.reusable_patterns
 
 
-def test_workflow_analysis_extracts_prompt_workflows(tmp_path: Path) -> None:
+def test_workflow_analysis_extracts_prompt_semantics() -> None:
+    repo_root = Path("tests/fixtures/sample_agent_repo")
+    repo_map = build_repo_map(repo_root)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    prompt_finding = next(f for f in workflow_findings if f.path == "prompts/reviewer-prompt.md")
+    assert "Use when reviewing a generated spec before implementation." in prompt_finding.trigger_conditions
+    assert "Read the spec." in prompt_finding.steps
+    assert any("MUST identify any requirement gaps" in item for item in prompt_finding.hard_constraints)
+    assert any("approval" in item.lower() for item in prompt_finding.approval_gates)
+    assert any("repeat until approved" in item.lower() for item in prompt_finding.review_loops)
+    assert any("escalate" in item.lower() for item in prompt_finding.escalation_paths)
+    assert "iterative review loop" in prompt_finding.reusable_patterns
+
+
+def test_workflow_analysis_ignores_fenced_code_blocks(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
-    prompt_dir = repo_root / "prompts"
-    prompt_dir.mkdir(parents=True)
-    (prompt_dir / "reviewer-prompt.md").write_text(
-        "# Reviewer Prompt\n\nUse when reviewing a generated spec.\n\n1. Read the spec.\n2. List gaps.\n",
+    skill_dir = repo_root / "skills" / "example"
+    skill_dir.mkdir(parents=True)
+    (skill_dir / "SKILL.md").write_text(
+        """---
+name: example
+description: Use when testing semantic extraction
+---
+
+# Example
+
+1. Review the file.
+2. Wait for approval.
+
+You MUST wait for user approval.
+
+```dot
+"Spec review passed?" -> "Spec review loop" [label="issues found"];
+```
+""",
         encoding="utf-8",
     )
 
     repo_map = build_repo_map(repo_root)
     workflow_findings = analyze_workflows(repo_root, repo_map)
-    prompt_finding = next(f for f in workflow_findings if f.path == "prompts/reviewer-prompt.md")
-    assert "Use when reviewing a generated spec." in prompt_finding.trigger_conditions
-    assert "Read the spec." in prompt_finding.steps
+    finding = next(f for f in workflow_findings if f.path == "skills/example/SKILL.md")
+    joined = "\n".join(
+        [
+            *finding.hard_constraints,
+            *finding.approval_gates,
+            *finding.review_loops,
+            *finding.escalation_paths,
+        ]
+    )
+    assert "Spec review passed?" not in joined
 
 
 def test_architecture_and_preservation_use_repo_map() -> None:
@@ -155,6 +196,11 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     ).read_text(encoding="utf-8")
     assert "Trigger Conditions" in workflow_text
     assert "Read the repo." in workflow_text
+    assert "Hard Constraints" in workflow_text
+    assert "Approval Gates" in workflow_text
+    assert "Review Loops" in workflow_text
+    assert "Escalation Paths" in workflow_text
+    assert "Reusable Patterns" in workflow_text
 
 
 def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
