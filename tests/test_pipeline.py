@@ -19,6 +19,73 @@ def test_logic_analysis_explains_meaningful_skill_file() -> None:
     assert skill_finding.reconstruction_notes
 
 
+def test_logic_analysis_extracts_python_file_structure() -> None:
+    repo_map = build_repo_map(Path("tests/fixtures/sample_agent_repo"))
+    findings = analyze_logic(Path("tests/fixtures/sample_agent_repo"), repo_map)
+    python_finding = next(f for f in findings if f.path == "src/example.py")
+    assert "ExampleRunner" in python_finding.summary
+    assert "load_config" in python_finding.key_signals
+    assert "main" in python_finding.key_signals
+    assert "import os" in python_finding.dependencies
+    assert "Entry point via __main__ guard." in python_finding.key_signals
+
+
+def test_logic_analysis_extracts_javascript_file_structure() -> None:
+    repo_map = build_repo_map(Path("tests/fixtures/sample_agent_repo"))
+    findings = analyze_logic(Path("tests/fixtures/sample_agent_repo"), repo_map)
+    js_finding = next(f for f in findings if f.path == "src/server.js")
+    assert "startServer" in js_finding.summary
+    assert 'const express = require("express");' in js_finding.dependencies
+    assert "Exports symbols via module.exports." in js_finding.key_signals
+    assert "Starts a listener or server process at module runtime." in js_finding.failure_modes
+
+
+def test_logic_analysis_extracts_shell_script_behavior() -> None:
+    repo_map = build_repo_map(Path("tests/fixtures/sample_agent_repo"))
+    findings = analyze_logic(Path("tests/fixtures/sample_agent_repo"), repo_map)
+    shell_finding = next(f for f in findings if f.path == "scripts/start-example.sh")
+    assert "node src/server.js" in shell_finding.summary
+    assert "PORT" in shell_finding.dependencies
+    assert "nohup" in shell_finding.key_signals
+    assert "while" not in shell_finding.key_signals
+    assert "case" not in shell_finding.key_signals
+    assert "Writes files or directories as part of execution." in shell_finding.failure_modes
+
+
+def test_logic_analysis_ignores_shell_control_flow_when_finding_commands(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    script_dir = repo_root / "scripts"
+    script_dir.mkdir(parents=True)
+    (script_dir / "start.sh").write_text(
+        """#!/usr/bin/env bash
+set -eu
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --foreground)
+      FOREGROUND=1
+      shift
+      ;;
+  esac
+done
+
+PORT="${PORT:-3000}"
+env PORT="$PORT" node index.js > logs/app.log 2>&1 &
+""",
+        encoding="utf-8",
+    )
+
+    repo_map = build_repo_map(repo_root)
+    findings = analyze_logic(repo_root, repo_map)
+    shell_finding = next(f for f in findings if f.path == "scripts/start.sh")
+    assert "while" not in shell_finding.key_signals
+    assert "case" not in shell_finding.key_signals
+    assert "--foreground)" not in shell_finding.key_signals
+    assert ";;" not in shell_finding.key_signals
+    assert "node" in shell_finding.dependencies
+    assert "PORT" in shell_finding.dependencies
+
+
 def test_workflow_analysis_extracts_trigger_and_steps() -> None:
     repo_map = build_repo_map(Path("tests/fixtures/sample_agent_repo"))
     workflow_findings = analyze_workflows(Path("tests/fixtures/sample_agent_repo"), repo_map)

@@ -1,6 +1,6 @@
 # Deep Analysis System Memory
 
-Last updated: 2026-03-11
+Last updated: 2026-03-12
 
 ## Purpose
 
@@ -77,6 +77,7 @@ Implemented:
 - reusable skill-pack writer in `src/deep_analysis/synthesis/skill_pack.py`
 - pipeline wiring in `src/deep_analysis/pipeline.py`
 - classifier fixes in `src/deep_analysis/classifier.py`
+- file-type-specific code and script analysis for Python, JavaScript, and shell artifacts
 
 ## Important Fixes Made
 
@@ -123,6 +124,21 @@ That is fixed now:
 
 This mattered because the first real smoke run on `superpowers` exposed incorrect analysis pages like JavaScript files being labeled as skills.
 
+### 4. Code and script logic analysis deepened
+
+Originally code and shell artifacts were summarized from their first line or first heading, which made the dossier read like indexing.
+
+That is now improved with per-type structural analysis:
+- Python files extract imports, classes, functions, and `__main__` entrypoints
+- JavaScript files extract requires/imports, defined functions, export markers, and runtime startup cues
+- shell scripts extract commands, environment-variable assumptions, runtime command flow, and operational side effects
+
+This also includes a shell parsing fix discovered during smoke testing:
+- ignore control-flow tokens like `while` and `case`
+- ignore case labels like `--flag)`
+- ignore shell terminators like `;;`
+- prioritize real commands over shell builtins in the dossier
+
 ## Principles We Followed
 
 These were the working principles during design and implementation:
@@ -141,6 +157,7 @@ Process principles used in this session:
 - use TDD before implementation changes
 - verify with fresh test and smoke-run evidence before claiming completion
 - fix root causes rather than patching symptoms
+- treat smoke-run output quality issues as real bugs, not just polish
 
 ## Verified Commands
 
@@ -169,13 +186,19 @@ Analyze a remote repo:
 python -m deep_analysis.cli analyze https://github.com/obra/superpowers.git /tmp/superpowers-deep-analysis-remote-20260311
 ```
 
+Analyze the deeper code/script logic slice:
+
+```bash
+python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-code-logic-20260312-v4 --export-skill-pack
+```
+
 ## Fresh Verification Evidence
 
 Most recent verified results:
 
-- `pytest -q` -> `16 passed in 0.15s`
+- `pytest -q` -> `20 passed in 0.15s`
 - local smoke run completed:
-  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-deep-analysis-final-20260311-v2 --export-skill-pack`
+  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-code-logic-20260312-v4 --export-skill-pack`
 - remote smoke run completed:
   `python -m deep_analysis.cli analyze https://github.com/obra/superpowers.git /tmp/superpowers-deep-analysis-remote-20260311`
 
@@ -183,16 +206,17 @@ Most recent verified results:
 
 Primary local smoke-run outputs:
 
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/analysis-project`
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/clone-blueprint`
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/skill-pack`
+- `/tmp/superpowers-code-logic-20260312-v4/analysis-project`
+- `/tmp/superpowers-code-logic-20260312-v4/clone-blueprint`
+- `/tmp/superpowers-code-logic-20260312-v4/skill-pack`
 
 Useful example pages:
 
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/analysis-project/03-file-analysis/skills-brainstorming-skill-md.md`
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/analysis-project/03-file-analysis/skills-brainstorming-scripts-index-js.md`
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/analysis-project/04-workflows-prompts-skills/skills-subagent-driven-development-implementer-prompt-md.md`
-- `/tmp/superpowers-deep-analysis-final-20260311-v2/clone-blueprint/docs/preservation-matrix.md`
+- `/tmp/superpowers-code-logic-20260312-v4/analysis-project/03-file-analysis/skills-brainstorming-skill-md.md`
+- `/tmp/superpowers-code-logic-20260312-v4/analysis-project/03-file-analysis/skills-brainstorming-scripts-index-js.md`
+- `/tmp/superpowers-code-logic-20260312-v4/analysis-project/03-file-analysis/skills-brainstorming-scripts-start-server-sh.md`
+- `/tmp/superpowers-code-logic-20260312-v4/analysis-project/04-workflows-prompts-skills/skills-subagent-driven-development-implementer-prompt-md.md`
+- `/tmp/superpowers-code-logic-20260312-v4/clone-blueprint/docs/preservation-matrix.md`
 
 ## Git State
 
@@ -205,8 +229,8 @@ Branch:
 PR:
 - `https://github.com/asdzxc1a/deep-analyse-/pull/1`
 
-Latest pushed commit at the time of this memory:
-- `0adcec2` - `Deepen dossier and workflow analysis outputs`
+Latest pushed commit at the time of the previous memory revision:
+- `7b1db38` - `Add persistent project memory document`
 
 There is one untracked local path left intentionally untouched:
 - `.superpowers/`
@@ -240,7 +264,7 @@ The system is meaningfully better than the first MVP, but it is still not the fi
 
 Current limitations:
 - logic analysis is still heuristic and deterministic, not true semantic reverse engineering
-- dependencies extraction is basic
+- dependencies extraction is better for code and shell files, but still not semantic dependency tracing
 - architecture synthesis is still subsystem-oriented, not full call-flow reconstruction
 - preservation decisions are rule-based, not license-aware or strategy-aware
 - dossier writing is now real, but not yet as deep as line-by-line architectural interpretation
@@ -251,11 +275,11 @@ Current limitations:
 
 If work resumes tomorrow, the strongest next slice is:
 
-1. deepen logic analysis for code and script files
-2. improve prompt and skill semantic extraction beyond bullet/number parsing
-3. add richer architecture reconstruction from imports, references, and repo structure
-4. improve preservation analysis with stronger rationale and future license awareness
-5. make dossier pages more reconstruction-oriented, not just descriptive
+1. improve prompt and skill semantic extraction beyond bullet/number parsing
+2. add richer architecture reconstruction from imports, references, and repo structure
+3. improve preservation analysis with stronger rationale and future license awareness
+4. make dossier pages more reconstruction-oriented, not just descriptive
+5. consider language-specific parsers only if heuristics stop producing useful output
 
 If the goal is immediate practical value, start with:
 - better code-file analysis for `*.py`, `*.js`, `*.ts`, `*.sh`
@@ -283,4 +307,4 @@ If the next task is to inspect current outputs, open:
 
 ## One-Line Session Handoff
 
-We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, verified it locally and against the GitHub repo, and pushed the finished upgrade to PR #1.
+We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, then deepened code and script logic analysis with file-type-specific extraction, verified it locally with 20 passing tests, and refreshed the `superpowers` dossier outputs on the current PR branch.
