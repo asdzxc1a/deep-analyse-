@@ -12,6 +12,80 @@ from deep_analysis.synthesis.dossier import write_dossier
 from deep_analysis.synthesis.skill_pack import write_skill_pack
 
 
+def test_doctrine_analysis_extracts_repo_beliefs() -> None:
+    from deep_analysis.analysis.doctrine import analyze_doctrine
+
+    repo_root = Path("tests/fixtures/sample_agent_repo")
+    repo_map = build_repo_map(repo_root)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    preservation = analyze_preservation(repo_root, repo_map)
+    doctrine = analyze_doctrine(repo_root, repo_map, workflow_findings, preservation)
+    assert doctrine.core_beliefs
+    assert any("verify" in belief.lower() for belief in doctrine.core_beliefs)
+    assert doctrine.non_negotiables
+    assert any("approval" in item.lower() or "review" in item.lower() for item in doctrine.non_negotiables)
+    assert doctrine.operator_contract
+    assert doctrine.evidence_artifacts
+
+
+def test_role_analysis_extracts_roles_and_handoffs() -> None:
+    from deep_analysis.analysis.roles import analyze_roles
+
+    repo_root = Path("tests/fixtures/sample_agent_repo")
+    repo_map = build_repo_map(repo_root)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    role_system = analyze_roles(workflow_findings)
+    role_names = {role.name.lower() for role in role_system.roles}
+    assert any("human" in name or "reviewer" in name for name in role_names)
+    assert any("agent" in name for name in role_names)
+    assert role_system.handoffs
+    assert any(handoff.approval_owner for handoff in role_system.handoffs)
+    assert any(handoff.escalation_owner for handoff in role_system.handoffs)
+
+
+def test_doctrine_analysis_filters_operational_noise(tmp_path: Path) -> None:
+    from deep_analysis.analysis.doctrine import analyze_doctrine
+
+    repo_root = tmp_path / "repo"
+    docs_dir = repo_root / "docs"
+    skill_dir = repo_root / "skills" / "example"
+    docs_dir.mkdir(parents=True)
+    skill_dir.mkdir(parents=True)
+    (docs_dir / "README.md").write_text(
+        """# Notes
+
+This repo believes review is safer than guessing.
+Quality means verify before claiming success.
+
+## Verify Installation
+
+1. Verify syntax
+2. Verify directory structure
+""",
+        encoding="utf-8",
+    )
+    (skill_dir / "SKILL.md").write_text(
+        """# Example
+
+You MUST wait for approval before changing behavior.
+If the loop exceeds 2 attempts, escalate to human.
+Human reviewer approves the next step.
+Agent executes the workflow.
+""",
+        encoding="utf-8",
+    )
+
+    repo_map = build_repo_map(repo_root)
+    workflow_findings = analyze_workflows(repo_root, repo_map)
+    preservation = analyze_preservation(repo_root, repo_map)
+    doctrine = analyze_doctrine(repo_root, repo_map, workflow_findings, preservation)
+    joined = "\n".join(doctrine.core_beliefs + doctrine.non_negotiables)
+    assert "This repo believes review is safer than guessing." in joined
+    assert "Quality means verify before claiming success." in joined
+    assert "Verify Installation" not in joined
+    assert "Verify syntax" not in joined
+
+
 def test_logic_analysis_explains_meaningful_skill_file() -> None:
     repo_map = build_repo_map(Path("tests/fixtures/sample_agent_repo"))
     findings = analyze_logic(Path("tests/fixtures/sample_agent_repo"), repo_map)
@@ -358,6 +432,29 @@ def test_run_analysis_pipeline_writes_dossier_and_blueprint(tmp_path: Path) -> N
     assert "Relationships" in architecture_text
     assert "Critical Paths" in architecture_text
     assert "Validation Paths" in architecture_text
+
+
+def test_run_analysis_pipeline_translation_mode_writes_translation_outputs(tmp_path: Path) -> None:
+    result = run_analysis_pipeline(
+        repo_url_or_path="tests/fixtures/sample_agent_repo",
+        output_root=tmp_path,
+        export_skill_pack=False,
+        target_domain="marketing",
+        vision_file=Path("tests/fixtures/marketing_vision.md"),
+    )
+    assert (result.analysis_project_dir / "10-doctrine" / "README.md").exists()
+    assert (result.analysis_project_dir / "11-role-system" / "README.md").exists()
+    assert (result.analysis_project_dir / "12-domain-translation" / "README.md").exists()
+    assert (result.analysis_project_dir / "13-artifact-equivalence" / "README.md").exists()
+    assert (result.blueprint_dir / "docs" / "domain-translation-map.md").exists()
+    assert (result.blueprint_dir / "docs" / "role-system.md").exists()
+    assert (result.blueprint_dir / "docs" / "target-doctrine.md").exists()
+    assert (result.blueprint_dir / "docs" / "marketing-capability-map.md").exists()
+    translation_text = (result.analysis_project_dir / "12-domain-translation" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    assert "campaign approval gate" in translation_text
+    assert "# Marketing Vision" not in translation_text
 
 
 def test_write_skill_pack_creates_reusable_analysis_workflow(tmp_path: Path) -> None:

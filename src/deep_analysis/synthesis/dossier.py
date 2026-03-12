@@ -1,7 +1,11 @@
 from pathlib import Path
 
 from deep_analysis.fs_utils import ensure_dir, safe_slug, write_text
-from deep_analysis.models import ArchitectureSummary, PreservationReport
+from deep_analysis.models import ArchitectureSummary, DomainTranslationPlan, PreservationReport, RepoDoctrine, RoleSystem
+from deep_analysis.synthesis.translation import render_artifact_equivalence
+from deep_analysis.synthesis.translation import render_doctrine
+from deep_analysis.synthesis.translation import render_domain_translation
+from deep_analysis.synthesis.translation import render_role_system
 
 
 DOSSIER_DIRS = [
@@ -14,6 +18,10 @@ DOSSIER_DIRS = [
     "07-reconstruction-plan",
     "08-clone-blueprint",
     "09-optional-skill-pack",
+    "10-doctrine",
+    "11-role-system",
+    "12-domain-translation",
+    "13-artifact-equivalence",
 ]
 
 
@@ -26,8 +34,20 @@ def write_dossier(
     workflow_patterns: list,
     architecture: ArchitectureSummary,
     preservation: PreservationReport,
+    doctrine: RepoDoctrine | None = None,
+    role_system: RoleSystem | None = None,
+    translation_plan: DomainTranslationPlan | None = None,
 ) -> None:
     ensure_dir(output_dir)
+    doctrine = doctrine or RepoDoctrine(
+        core_beliefs=[],
+        non_negotiables=[],
+        quality_bar=[],
+        operator_contract=[],
+        anti_patterns=[],
+        evidence_artifacts=[],
+    )
+    role_system = role_system or RoleSystem(roles=[], handoffs=[])
 
     for directory in DOSSIER_DIRS:
         ensure_dir(output_dir / directory)
@@ -76,6 +96,11 @@ def write_dossier(
         output_dir / "09-optional-skill-pack" / "README.md",
         "# Optional Skill Pack\n\nRun `deep-analysis export-skill-pack <analysis-run> <output-dir>` to export the reusable workflow.\n",
     )
+    write_text(output_dir / "10-doctrine" / "README.md", render_doctrine(doctrine))
+    write_text(output_dir / "11-role-system" / "README.md", render_role_system(role_system))
+    if translation_plan is not None:
+        write_text(output_dir / "12-domain-translation" / "README.md", render_domain_translation(translation_plan))
+        write_text(output_dir / "13-artifact-equivalence" / "README.md", render_artifact_equivalence(translation_plan))
 
 
 def _write_file_analysis(

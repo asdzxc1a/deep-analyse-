@@ -12,6 +12,11 @@ description: Use when testing workflow analysis
 5. Use `prompts/reviewer-prompt.md` before changing the implementation in `src/example.py`.
 
 You MUST confirm assumptions before changing behavior.
+You MUST preserve the operator workflow instead of bypassing it for speed.
+Quality means review before launch and verification before status claims.
 Wait for user approval before proceeding.
 If issues are found, repeat until approved.
 If the loop exceeds 3 attempts, escalate to human.
+
+Human operator approves the next step.
+Agent performs the investigation and implementation handoff.

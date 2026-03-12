@@ -28,5 +28,9 @@ def write_skill_pack(output_dir: Path) -> None:
             "- `analysis-project/` must contain source profile, repo map, file analysis, workflows, architecture, preservation boundaries, and reconstruction plan.\n"
             "- `clone-blueprint/` must contain preservation matrix, reconstruction plan, starter source folders, and differentiation notes.\n"
             "- Human-facing language should be rewritten into the operator's own voice unless preservation review explicitly allows otherwise.\n"
+            "\n## Translation Mode\n\n"
+            "Use translation mode when you want a target-aware rebuild contract instead of only source reconstruction.\n"
+            "- Example: `python -m deep_analysis.cli analyze <repo> <out> --target-domain marketing --vision-file vision.md`\n"
+            "- Translation mode should add doctrine, role-system, domain-translation, and artifact-equivalence outputs.\n"
         ),
     )

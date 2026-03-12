@@ -133,28 +133,31 @@ In practical terms, it is already good for:
 
 It is not finished yet, but it is already beyond MVP scaffolding and can produce genuinely useful analysis outputs.
 
-## Planned V2 Upgrade
+## V2 Domain Translation Status
 
-The next planned major upgrade is to move from:
+V2 is now the current top-level capability.
+
+The system can now move from:
 - reconstruction system
 
 to:
 - reconstruction plus domain-translation system
 
-This v2 is designed so the repo can analyze something like `superpowers` and generate a target-aware rebuild contract for a new domain such as marketing.
+This means it can analyze a source repo like `superpowers` and produce a target-aware rebuild contract for a new domain such as marketing.
 
-Planned new capabilities:
+Implemented v2 capabilities:
 - doctrine extraction
 - role-system and handoff extraction
 - artifact equivalence mapping
 - target-domain translation planning
-- target-aware blueprint docs and starter structure
+- target-aware dossier sections
+- target-aware blueprint docs and marketing scaffold placeholders
 
-Planned docs for this work:
+Design and implementation docs:
 - `docs/specs/2026-03-12-domain-translation-v2-design.md`
 - `docs/plans/2026-03-12-domain-translation-v2.md`
 
-Planned CLI shape:
+Current translation-mode CLI:
 
 ```bash
 python -m deep_analysis.cli analyze \
@@ -164,6 +167,21 @@ python -m deep_analysis.cli analyze \
   --target-domain marketing \
   --vision-file tests/fixtures/marketing_vision.md
 ```
+
+Translation-mode outputs:
+- `analysis-project/10-doctrine/README.md`
+- `analysis-project/11-role-system/README.md`
+- `analysis-project/12-domain-translation/README.md`
+- `analysis-project/13-artifact-equivalence/README.md`
+- `clone-blueprint/docs/domain-translation-map.md`
+- `clone-blueprint/docs/role-system.md`
+- `clone-blueprint/docs/target-doctrine.md`
+- `clone-blueprint/docs/marketing-capability-map.md`
+
+Current recommendation after v2:
+- deepen target-domain mapping quality for more domains beyond `marketing`
+- improve role-to-capability translation so target blueprints feel less generic
+- strengthen artifact-equivalence rules for large prompt libraries and multi-agent repo families
 
 ## Current Implementation Status
 

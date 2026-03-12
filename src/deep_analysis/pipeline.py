@@ -2,8 +2,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from deep_analysis.analysis.architecture import analyze_architecture
+from deep_analysis.analysis.doctrine import analyze_doctrine
+from deep_analysis.analysis.domain_translation import build_domain_translation_plan, parse_vision_file
+from deep_analysis.analysis.equivalence import analyze_artifact_equivalence
 from deep_analysis.analysis.logic import analyze_logic
 from deep_analysis.analysis.preservation import analyze_preservation
+from deep_analysis.analysis.roles import analyze_roles
 from deep_analysis.analysis.workflows import analyze_workflows
 from deep_analysis.analysis.workflows import synthesize_repo_workflow_patterns
 from deep_analysis.cartography import build_repo_map
@@ -20,7 +24,13 @@ class PipelineResult:
     skill_pack_dir: Path | None
 
 
-def run_analysis_pipeline(repo_url_or_path: str, output_root: Path, export_skill_pack: bool) -> PipelineResult:
+def run_analysis_pipeline(
+    repo_url_or_path: str,
+    output_root: Path,
+    export_skill_pack: bool,
+    target_domain: str | None = None,
+    vision_file: Path | None = None,
+) -> PipelineResult:
     workspace = prepare_repo_workspace(repo_url_or_path, output_root / "workspace")
     repo_map = build_repo_map(workspace.source_repo_path)
     logic_findings = analyze_logic(workspace.source_repo_path, repo_map)
@@ -28,6 +38,28 @@ def run_analysis_pipeline(repo_url_or_path: str, output_root: Path, export_skill
     workflow_patterns = synthesize_repo_workflow_patterns(workflow_findings)
     architecture = analyze_architecture(repo_map)
     preservation = analyze_preservation(workspace.source_repo_path, repo_map)
+    doctrine = analyze_doctrine(workspace.source_repo_path, repo_map, workflow_findings, preservation)
+    roles = analyze_roles(workflow_findings)
+    vision = parse_vision_file(vision_file, target_domain) if target_domain and vision_file is not None else None
+    artifact_translations = (
+        analyze_artifact_equivalence(repo_map, preservation, doctrine, roles, target_domain)
+        if target_domain
+        else None
+    )
+    translation_plan = (
+        build_domain_translation_plan(
+            workspace.source_repo_path.name,
+            target_domain,
+            repo_map,
+            doctrine,
+            roles,
+            workflow_patterns,
+            artifact_translations or [],
+            vision,
+        )
+        if target_domain
+        else None
+    )
 
     if not repo_map.artifacts:
         raise ValueError("No artifacts found during analysis")
@@ -49,12 +81,16 @@ def run_analysis_pipeline(repo_url_or_path: str, output_root: Path, export_skill
         workflow_patterns,
         architecture,
         preservation,
+        doctrine,
+        roles,
+        translation_plan,
     )
     write_blueprint_repo(
         blueprint_dir,
         workspace.source_repo_path.name,
         preservation.decisions,
         workflow_patterns,
+        translation_plan,
     )
 
     if skill_pack_dir is not None:
