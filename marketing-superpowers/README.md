@@ -72,3 +72,13 @@ The vertical system is built around four content buckets:
 - behind-the-look stories
 
 Use this repo to turn creator growth into a repeatable system, not a random posting habit.
+
+## Live Strategy Pack
+
+The reusable vertical system now has a live account strategy pack in:
+- `strategy/account/creator-profile.md`
+- `strategy/account/audience-map.md`
+- `strategy/account/content-pillars.md`
+- `strategy/account/series-library.md`
+- `strategy/account/platform-strategy.md`
+- `strategy/account/first-2-week-plan.md`
