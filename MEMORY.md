@@ -94,6 +94,17 @@ Today, the system can already do these things in a useful way:
   - strategy notes
   - legal-review flags
   - confidence labels
+- generate reconstruction-oriented dossier pages with:
+  - system-role framing
+  - preserve/change boundaries
+  - rebuild strategy guidance
+  - suggested first implementation slices
+- generate workflow pages with rebuild guidance instead of only extracted semantics
+- generate dossier-level reconstruction plans that prioritize:
+  - entrypoints
+  - workflow layer recovery
+  - architecture-guided build order
+  - preservation-aware carryover rules
 
 In practical terms, it is already good for:
 - understanding repos like `superpowers`
@@ -123,6 +134,7 @@ Implemented:
 - graph-backed architecture reconstruction from local references, workflow invocations, and script/code links
 - semantic extraction for prompt and skill constraints, approval gates, loops, escalation paths, and reusable patterns
 - richer preservation analysis with artifact roles, strategy notes, legal-review flags, and confidence labels
+- reconstruction-oriented dossier synthesis for artifact pages, workflow pages, and rebuild ordering
 
 ## Important Fixes Made
 
@@ -232,6 +244,25 @@ Important boundary:
 - the system still does not provide legal advice
 - the legal-review field is a workflow signal for cautious reuse, not a legal conclusion
 
+### 8. Dossier pages became reconstruction-oriented
+
+Originally dossier pages were informative, but still mostly descriptive.
+
+That is now improved with reconstruction-oriented synthesis:
+- artifact pages explicitly describe system role
+- artifact pages separate preserve-vs-change boundaries
+- artifact pages provide a rebuild strategy instead of only a summary
+- artifact pages propose a suggested first slice for implementation
+- workflow pages include rebuild guidance tied to constraints, approvals, loops, and escalation behavior
+- the reconstruction plan now starts from entrypoints, then workflow layer, then architecture-guided dependency order, then preservation enforcement
+
+This matters because the dossier now answers:
+- what this artifact does
+- what must survive in the rebuild
+- what is safe to rewrite
+- how to rebuild it first
+- what order to tackle the system in
+
 ## Principles We Followed
 
 These were the working principles during design and implementation:
@@ -306,13 +337,19 @@ Analyze the preservation-analysis slice:
 python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-preservation-20260312 --export-skill-pack
 ```
 
+Analyze the reconstruction-oriented dossier slice:
+
+```bash
+python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-rebuild-dossiers-20260312 --export-skill-pack
+```
+
 ## Fresh Verification Evidence
 
 Most recent verified results:
 
 - `pytest -q` -> `22 passed in 0.16s`
 - local smoke run completed:
-  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-preservation-20260312 --export-skill-pack`
+  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-rebuild-dossiers-20260312 --export-skill-pack`
 - remote smoke run completed:
   `python -m deep_analysis.cli analyze https://github.com/obra/superpowers.git /tmp/superpowers-deep-analysis-remote-20260311`
 
@@ -320,15 +357,15 @@ Most recent verified results:
 
 Primary local smoke-run outputs:
 
-- `/tmp/superpowers-preservation-20260312/analysis-project`
-- `/tmp/superpowers-preservation-20260312/clone-blueprint`
-- `/tmp/superpowers-preservation-20260312/skill-pack`
+- `/tmp/superpowers-rebuild-dossiers-20260312/analysis-project`
+- `/tmp/superpowers-rebuild-dossiers-20260312/clone-blueprint`
+- `/tmp/superpowers-rebuild-dossiers-20260312/skill-pack`
 
 Useful example pages:
 
-- `/tmp/superpowers-preservation-20260312/analysis-project/04-workflows-prompts-skills/skills-brainstorming-skill-md.md`
-- `/tmp/superpowers-preservation-20260312/analysis-project/05-architecture/README.md`
-- `/tmp/superpowers-preservation-20260312/clone-blueprint/docs/preservation-matrix.md`
+- `/tmp/superpowers-rebuild-dossiers-20260312/analysis-project/03-file-analysis/skills-brainstorming-skill-md.md`
+- `/tmp/superpowers-rebuild-dossiers-20260312/analysis-project/04-workflows-prompts-skills/skills-subagent-driven-development-implementer-prompt-md.md`
+- `/tmp/superpowers-rebuild-dossiers-20260312/analysis-project/07-reconstruction-plan/README.md`
 
 ## Git State
 
@@ -341,8 +378,8 @@ Branch:
 PR:
 - `https://github.com/asdzxc1a/deep-analyse-/pull/1`
 
-Latest pushed commit at the time of the previous memory revision:
-- `2270817` - `Refresh project memory after semantic extraction`
+Latest pushed commit before this memory revision:
+- `8db85af` - `Deepen preservation analysis guidance`
 
 There is one untracked local path left intentionally untouched:
 - `.superpowers/`
@@ -367,7 +404,7 @@ Open /Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system/
 ```
 
 Current recommended next stage:
-- make dossier pages more reconstruction-oriented, not just descriptive
+- add higher-confidence architecture relationships for docs, prompts, and tests
 
 ## Most Important Files
 
@@ -403,6 +440,7 @@ Current limitations:
 - workflow semantics are much stronger, but reusable pattern extraction is still label-based rather than cross-repo mining
 - preservation decisions are much stronger, but still heuristic rather than truly license-aware or policy-aware
 - dossier writing is now real, but not yet as deep as line-by-line architectural interpretation
+- reconstruction guidance is now materially better, but architecture links from docs, prompts, and tests are still weaker than code/script links
 - there is no long-lived memory or repo history database yet
 - there is no interactive “rebuild with my vision” transformation engine yet
 
@@ -410,10 +448,10 @@ Current limitations:
 
 If work resumes tomorrow, the strongest next slice is:
 
-1. make dossier pages more reconstruction-oriented, not just descriptive
-2. add higher-confidence architecture relationships for docs, prompts, and tests
-3. improve reusable pattern synthesis across multiple workflow artifacts
-4. add smarter preservation handling for tests and fixtures vs production artifacts
+1. add higher-confidence architecture relationships for docs, prompts, and tests
+2. improve reusable pattern synthesis across multiple workflow artifacts
+3. add smarter preservation handling for tests and fixtures vs production artifacts
+4. deepen dossier guidance for prompts that currently expose weak step extraction
 5. consider language-specific parsers only if heuristics stop producing useful output
 
 If the goal is immediate practical value, start with:
@@ -438,8 +476,8 @@ If the next task is to deepen the analyzer, continue from the current verified b
 - `codex/deep-analysis-system`
 
 If the next task is to inspect current outputs, open:
-- `/tmp/superpowers-preservation-20260312/analysis-project`
+- `/tmp/superpowers-rebuild-dossiers-20260312/analysis-project`
 
 ## One-Line Session Handoff
 
-We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, then upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, verified it locally with 22 passing tests, and refreshed the `superpowers` blueprint outputs on the current PR branch.
+We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, then made dossier pages reconstruction-oriented with preserve/change boundaries, rebuild strategy, suggested first slices, and architecture-aware rebuild ordering, verified it locally with 22 passing tests, and refreshed the `superpowers` outputs on the current PR branch.

@@ -47,13 +47,19 @@ def write_dossier(
         output_dir / "02-repo-map" / "README.md",
         _render_repo_map(repo_map, meaningful_artifacts),
     )
-    _write_file_analysis(output_dir / "03-file-analysis", logic_findings)
-    _write_workflow_analysis(output_dir / "04-workflows-prompts-skills", workflow_findings)
+    _write_file_analysis(
+        output_dir / "03-file-analysis",
+        logic_findings,
+        preservation,
+        architecture,
+        workflow_findings,
+    )
+    _write_workflow_analysis(output_dir / "04-workflows-prompts-skills", workflow_findings, preservation)
     write_text(output_dir / "05-architecture" / "README.md", _render_architecture(architecture))
     write_text(output_dir / "06-preservation-boundaries" / "README.md", _render_preservation(preservation))
     write_text(
         output_dir / "07-reconstruction-plan" / "README.md",
-        _render_reconstruction_plan(repo_name, logic_findings, workflow_findings),
+        _render_reconstruction_plan(repo_name, logic_findings, workflow_findings, architecture),
     )
     write_text(
         output_dir / "08-clone-blueprint" / "README.md",
@@ -65,21 +71,38 @@ def write_dossier(
     )
 
 
-def _write_file_analysis(output_dir: Path, logic_findings: list) -> None:
+def _write_file_analysis(
+    output_dir: Path,
+    logic_findings: list,
+    preservation: PreservationReport,
+    architecture: ArchitectureSummary,
+    workflow_findings: list,
+) -> None:
     index_lines = ["# File Analysis", ""]
+    preservation_by_path = {decision.path: decision for decision in preservation.decisions}
+    workflows_by_path = {finding.path: finding for finding in workflow_findings}
     for finding in logic_findings:
         slug = safe_slug(finding.path) + ".md"
         index_lines.append(f"- [{finding.path}](./{slug})")
-        write_text(output_dir / slug, _render_artifact_finding(finding))
+        write_text(
+            output_dir / slug,
+            _render_artifact_finding(
+                finding,
+                preservation_by_path.get(finding.path),
+                architecture,
+                workflows_by_path.get(finding.path),
+            ),
+        )
     write_text(output_dir / "README.md", "\n".join(index_lines) + "\n")
 
 
-def _write_workflow_analysis(output_dir: Path, workflow_findings: list) -> None:
+def _write_workflow_analysis(output_dir: Path, workflow_findings: list, preservation: PreservationReport) -> None:
     index_lines = ["# Workflows, Prompts, and Skills", ""]
+    preservation_by_path = {decision.path: decision for decision in preservation.decisions}
     for finding in workflow_findings:
         slug = safe_slug(finding.path) + ".md"
         index_lines.append(f"- [{finding.path}](./{slug})")
-        write_text(output_dir / slug, _render_workflow_finding(finding))
+        write_text(output_dir / slug, _render_workflow_finding(finding, preservation_by_path.get(finding.path)))
     write_text(output_dir / "README.md", "\n".join(index_lines) + "\n")
 
 
@@ -96,7 +119,12 @@ def _render_repo_map(repo_map, meaningful_artifacts: list) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _render_artifact_finding(finding) -> str:
+def _render_artifact_finding(finding, preservation_decision, architecture: ArchitectureSummary, workflow_finding) -> str:
+    system_role = _describe_system_role(finding, preservation_decision, architecture)
+    preserve_lines = _build_preserve_lines(finding, preservation_decision, architecture, workflow_finding)
+    change_lines = _build_change_lines(finding, preservation_decision)
+    rebuild_strategy = _build_rebuild_strategy(finding, preservation_decision, workflow_finding)
+    first_slice = _build_first_slice(finding, preservation_decision, architecture, workflow_finding)
     lines = [
         f"# {finding.path}",
         "",
@@ -115,11 +143,18 @@ def _render_artifact_finding(finding) -> str:
     lines.extend(f"- {dep}" for dep in finding.dependencies or ["None detected"])
     lines.extend(["", "## Failure Modes", ""])
     lines.extend(f"- {mode}" for mode in finding.failure_modes)
+    lines.extend(["", "## System Role", "", system_role, ""])
+    lines.extend(["## Preserve In Rebuild", ""])
+    lines.extend(f"- {item}" for item in preserve_lines)
+    lines.extend(["", "## Safe To Change", ""])
+    lines.extend(f"- {item}" for item in change_lines)
+    lines.extend(["", "## Rebuild Strategy", "", rebuild_strategy, ""])
+    lines.extend(["## Suggested First Slice", "", first_slice, ""])
     lines.extend(["", "## Reconstruction Notes", "", finding.reconstruction_notes, ""])
     return "\n".join(lines)
 
 
-def _render_workflow_finding(finding) -> str:
+def _render_workflow_finding(finding, preservation_decision) -> str:
     lines = [
         f"# {finding.path}",
         "",
@@ -152,6 +187,8 @@ def _render_workflow_finding(finding) -> str:
             lines.append(f"- Human: {finding.human_role}")
         if finding.agent_role:
             lines.append(f"- Agent: {finding.agent_role}")
+    lines.extend(["", "## Rebuild Guidance", ""])
+    lines.extend(f"- {item}" for item in _build_workflow_guidance(finding, preservation_decision))
     lines.append("")
     return "\n".join(lines)
 
@@ -175,11 +212,95 @@ def _render_preservation(preservation: PreservationReport) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _render_reconstruction_plan(repo_name: str, logic_findings: list, workflow_findings: list) -> str:
+def _render_reconstruction_plan(
+    repo_name: str,
+    logic_findings: list,
+    workflow_findings: list,
+    architecture: ArchitectureSummary,
+) -> str:
+    entrypoint_list = ", ".join(architecture.entrypoints[:3]) if architecture.entrypoints else "documented operator entrypoints"
+    critical_path = architecture.critical_paths[0] if architecture.critical_paths else "Use the architecture page to recover the highest-leverage execution path."
     return (
         f"# Reconstruction Plan\n\n"
         f"Target repo: {repo_name}\n\n"
-        f"1. Recreate the {len(workflow_findings)} workflow-bearing artifacts in your own language.\n"
-        f"2. Rebuild the {len(logic_findings)} meaningful artifacts while preserving their system roles.\n"
-        "3. Apply the preservation matrix before carrying source material into the blueprint repo.\n"
+        "1. Start with executable or operator-facing entrypoints so the rebuilt system has a usable spine early.\n"
+        f"   Prioritize: {entrypoint_list}.\n"
+        "2. Recreate the workflow layer next so approvals, review loops, and operator expectations exist before broad implementation.\n"
+        f"   This repo currently has {len(workflow_findings)} workflow-bearing artifact(s).\n"
+        "3. Use the architecture page to rebuild dependencies in a system-aware order instead of file-by-file drift.\n"
+        f"   First critical path: {critical_path}\n"
+        "4. Apply the preservation matrix before carrying language, prompts, or implementation details into the blueprint repo.\n"
+        f"   This repo currently has {len(logic_findings)} meaningful artifact(s) to rebuild against those boundaries.\n"
     )
+
+
+def _describe_system_role(finding, preservation_decision, architecture: ArchitectureSummary) -> str:
+    role = preservation_decision.artifact_role if preservation_decision else "meaningful system artifact"
+    if finding.path in architecture.entrypoints:
+        return f"This file is a {role} and acts as a repo entrypoint or first-touch surface for system behavior."
+    return f"This file is a {role} that contributes to the repo's observable behavior or operator workflow."
+
+
+def _build_preserve_lines(finding, preservation_decision, architecture: ArchitectureSummary, workflow_finding) -> list[str]:
+    lines = [
+        "Preserve the artifact's role in the system even if the implementation or wording changes.",
+    ]
+    if preservation_decision:
+        lines.append(preservation_decision.strategy_note)
+    if finding.dependencies:
+        lines.append(f"Keep the key dependencies or interfaces aligned with: {', '.join(finding.dependencies[:3])}.")
+    if finding.path in architecture.entrypoints:
+        lines.append("Maintain an entrypoint with the same operational purpose so users or automation can trigger the rebuilt system.")
+    if workflow_finding and (workflow_finding.approval_gates or workflow_finding.review_loops):
+        lines.append("Preserve the human approval and review-loop behavior attached to this artifact.")
+    return lines
+
+
+def _build_change_lines(finding, preservation_decision) -> list[str]:
+    if not preservation_decision:
+        return ["Implementation details may change as long as the artifact keeps the same system role."]
+    if preservation_decision.decision == "rewrite-with-differentiation":
+        return ["Rewrite the framing, positioning, and wording so the rebuilt system has its own voice."]
+    if preservation_decision.decision == "rewrite-equivalent":
+        return ["Change the wording, examples, and organization while preserving the workflow semantics."]
+    if preservation_decision.decision == "preserve-with-review":
+        return ["Adapt environment assumptions, local paths, and execution details to match the new operating context."]
+    return ["Change internal implementation details while preserving interfaces, side effects, and observable behavior."]
+
+
+def _build_rebuild_strategy(finding, preservation_decision, workflow_finding) -> str:
+    strategy_parts = [finding.reconstruction_notes]
+    if preservation_decision:
+        strategy_parts.append(preservation_decision.strategy_note)
+    if workflow_finding and workflow_finding.steps:
+        strategy_parts.append(
+            "Rebuild the surrounding workflow with the same step order before broadening the implementation surface."
+        )
+    return " ".join(strategy_parts)
+
+
+def _build_first_slice(finding, preservation_decision, architecture: ArchitectureSummary, workflow_finding) -> str:
+    if finding.path in architecture.entrypoints:
+        return "Create a minimal but runnable version of this entrypoint that reaches the same observable start condition."
+    if workflow_finding:
+        return "Recreate the smallest version of this workflow with one trigger, one approval gate, and one successful completion path."
+    if preservation_decision and preservation_decision.artifact_role == "behavior-bearing implementation":
+        return "Implement the smallest behavior slice that preserves the file's public interface and one core execution path."
+    return "Rebuild the smallest version of this artifact that preserves its system role and one concrete output."
+
+
+def _build_workflow_guidance(finding, preservation_decision) -> list[str]:
+    guidance = [
+        "Recreate the trigger condition and first successful path before expanding edge cases.",
+    ]
+    if finding.hard_constraints:
+        guidance.append("Carry the non-negotiable constraints forward so the rebuilt workflow keeps its safety boundaries.")
+    if finding.approval_gates:
+        guidance.append("Preserve the approval gate structure so human checkpoints remain explicit.")
+    if finding.review_loops:
+        guidance.append("Implement at least one review loop in the rebuilt version before automating more branches.")
+    if finding.escalation_paths:
+        guidance.append("Keep a visible escalation path for blocked or ambiguous cases.")
+    if preservation_decision:
+        guidance.append(preservation_decision.strategy_note)
+    return guidance

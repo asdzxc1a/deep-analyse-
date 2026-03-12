@@ -199,6 +199,11 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     ).read_text(encoding="utf-8")
     assert "Artifact Type: skill" in file_analysis_text
     assert "Reconstruction Notes" in file_analysis_text
+    assert "System Role" in file_analysis_text
+    assert "Preserve In Rebuild" in file_analysis_text
+    assert "Safe To Change" in file_analysis_text
+    assert "Rebuild Strategy" in file_analysis_text
+    assert "Suggested First Slice" in file_analysis_text
     workflow_text = (
         output_dir / "04-workflows-prompts-skills" / "skills-example-skill-md.md"
     ).read_text(encoding="utf-8")
@@ -209,6 +214,13 @@ def test_write_dossier_creates_expected_directories(tmp_path: Path) -> None:
     assert "Review Loops" in workflow_text
     assert "Escalation Paths" in workflow_text
     assert "Reusable Patterns" in workflow_text
+    assert "Rebuild Guidance" in workflow_text
+    reconstruction_text = (output_dir / "07-reconstruction-plan" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Start with executable or operator-facing entrypoints" in reconstruction_text
+    assert "preservation matrix" in reconstruction_text
+    assert "architecture page" in reconstruction_text
 
 
 def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
