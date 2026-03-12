@@ -98,6 +98,7 @@ Today, the system can already do these things in a useful way:
   - strategy notes
   - legal-review flags
   - confidence labels
+  - contract-vs-harness guidance for tests and fixtures
 - generate reconstruction-oriented dossier pages with:
   - system-role framing
   - preserve/change boundaries
@@ -151,6 +152,7 @@ Implemented:
 - semantic extraction for prompt and skill constraints, approval gates, loops, escalation paths, and reusable patterns
 - repo-level workflow pattern synthesis from repeated cross-file semantics
 - richer preservation analysis with artifact roles, strategy notes, legal-review flags, and confidence labels
+- test- and fixture-aware preservation guidance for verification contracts and harness material
 - reconstruction-oriented dossier synthesis for artifact pages, workflow pages, and rebuild ordering
 
 ## Important Fixes Made
@@ -255,11 +257,29 @@ Current decision vocabulary:
 - `rewrite-with-differentiation`
 - `rewrite-equivalent`
 - `preserve-core-behavior`
+- `preserve-verification-contract`
+- `adapt-test-fixture`
 - `preserve-with-review`
 
 Important boundary:
 - the system still does not provide legal advice
 - the legal-review field is a workflow signal for cautious reuse, not a legal conclusion
+
+### 11. Test and fixture preservation became smarter
+
+Originally preservation analysis treated tests too much like production code and fixtures too much like ordinary support docs.
+
+That is now improved with:
+- `contract-bearing verification` as a separate preservation role for tests
+- `test-support fixture` as a separate preservation role for fixtures and sample reference artifacts
+- `preserve-verification-contract` for tests
+- `adapt-test-fixture` for fixture material
+- blueprint guidance that explicitly separates preserving assertions/contracts from preserving harness details
+
+This matters because the blueprint now tells you:
+- preserve what a test proves
+- allow the rebuilt harness and assertion style to change
+- adapt fixture content to the new system instead of carrying it over blindly
 
 ### 8. Dossier pages became reconstruction-oriented
 
@@ -404,13 +424,19 @@ Analyze the repo-level workflow-pattern slice:
 python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-workflow-patterns-20260312 --export-skill-pack
 ```
 
+Analyze the smarter test-and-fixture-preservation slice:
+
+```bash
+python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-test-preservation-20260312 --export-skill-pack
+```
+
 ## Fresh Verification Evidence
 
 Most recent verified results:
 
 - `pytest -q` -> `24 passed in 0.15s`
 - local smoke run completed:
-  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-workflow-patterns-20260312 --export-skill-pack`
+  `python -m deep_analysis.cli analyze "/Users/dmytrnewaimastery/Documents/Codex app projects/superpowers" /tmp/superpowers-test-preservation-20260312 --export-skill-pack`
 - remote smoke run completed:
   `python -m deep_analysis.cli analyze https://github.com/obra/superpowers.git /tmp/superpowers-deep-analysis-remote-20260311`
 
@@ -418,15 +444,15 @@ Most recent verified results:
 
 Primary local smoke-run outputs:
 
-- `/tmp/superpowers-workflow-patterns-20260312/analysis-project`
-- `/tmp/superpowers-workflow-patterns-20260312/clone-blueprint`
-- `/tmp/superpowers-workflow-patterns-20260312/skill-pack`
+- `/tmp/superpowers-test-preservation-20260312/analysis-project`
+- `/tmp/superpowers-test-preservation-20260312/clone-blueprint`
+- `/tmp/superpowers-test-preservation-20260312/skill-pack`
 
 Useful example pages:
 
-- `/tmp/superpowers-workflow-patterns-20260312/analysis-project/04-workflows-prompts-skills/repo-patterns.md`
-- `/tmp/superpowers-workflow-patterns-20260312/analysis-project/07-reconstruction-plan/README.md`
-- `/tmp/superpowers-workflow-patterns-20260312/clone-blueprint/docs/workflow-patterns.md`
+- `/tmp/superpowers-test-preservation-20260312/clone-blueprint/docs/preservation-matrix.md`
+- `/tmp/superpowers-test-preservation-20260312/clone-blueprint/docs/reconstruction-plan.md`
+- `/tmp/superpowers-test-preservation-20260312/clone-blueprint/docs/workflow-patterns.md`
 
 ## Git State
 
@@ -440,7 +466,7 @@ PR:
 - `https://github.com/asdzxc1a/deep-analyse-/pull/1`
 
 Latest pushed commit before this memory revision:
-- `a8f00cb` - `Link docs prompts and tests into architecture`
+- `d341e70` - `Synthesize repo-level workflow patterns`
 
 There is one untracked local path left intentionally untouched:
 - `.superpowers/`
@@ -465,7 +491,7 @@ Open /Users/dmytrnewaimastery/Documents/Codex app projects/deep-analysis-system/
 ```
 
 Current recommended next stage:
-- add smarter preservation handling for tests and fixtures vs production artifacts
+- deepen dossier guidance for prompts that currently expose weak step extraction
 
 ## Most Important Files
 
@@ -502,6 +528,7 @@ Current limitations:
 - workflow semantics are much stronger, but reusable pattern extraction is still label-based rather than cross-repo mining
 - repo-level pattern synthesis is now useful, but it still groups by deterministic families rather than deeper semantic equivalence
 - preservation decisions are much stronger, but still heuristic rather than truly license-aware or policy-aware
+- test/fixture preservation is now clearer, but fixture detection is still path/name heuristic rather than semantic
 - dossier writing is now real, but not yet as deep as line-by-line architectural interpretation
 - there is no long-lived memory or repo history database yet
 - there is no interactive “rebuild with my vision” transformation engine yet
@@ -510,10 +537,10 @@ Current limitations:
 
 If work resumes tomorrow, the strongest next slice is:
 
-1. add smarter preservation handling for tests and fixtures vs production artifacts
-2. deepen dossier guidance for prompts that currently expose weak step extraction
-3. strengthen validation-aware synthesis in architecture critical paths
-4. improve repo-level pattern clustering beyond deterministic families
+1. deepen dossier guidance for prompts that currently expose weak step extraction
+2. strengthen validation-aware synthesis in architecture critical paths
+3. improve repo-level pattern clustering beyond deterministic families
+4. refine fixture detection beyond path/name heuristics
 5. consider language-specific parsers only if heuristics stop producing useful output
 
 If the goal is immediate practical value, start with:
@@ -538,8 +565,8 @@ If the next task is to deepen the analyzer, continue from the current verified b
 - `codex/deep-analysis-system`
 
 If the next task is to inspect current outputs, open:
-- `/tmp/superpowers-workflow-patterns-20260312/analysis-project`
+- `/tmp/superpowers-test-preservation-20260312/clone-blueprint`
 
 ## One-Line Session Handoff
 
-We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, made dossier pages reconstruction-oriented with preserve/change boundaries, rebuild strategy, suggested first slices, and architecture-aware rebuild ordering, deepened cross-artifact architecture links so docs, prompts, skills, and tests can participate in the system graph, then added repo-level workflow pattern synthesis so repeated operating motifs are captured in the dossier and blueprint, verified it locally with 24 passing tests, and refreshed the `superpowers` outputs on the current PR branch.
+We designed and implemented the first real version of the deep-analysis system, upgraded it from scaffold outputs to actual dossier/workflow/blueprint generation, fixed the major classification bug discovered on a real `superpowers` smoke run, deepened code and script logic analysis, added graph-backed architecture reconstruction, deepened prompt and skill semantic extraction, upgraded preservation analysis with richer decision categories, strategy notes, legal-review flags, and confidence labels, made dossier pages reconstruction-oriented with preserve/change boundaries, rebuild strategy, suggested first slices, and architecture-aware rebuild ordering, deepened cross-artifact architecture links so docs, prompts, skills, and tests can participate in the system graph, added repo-level workflow pattern synthesis so repeated operating motifs are captured in the dossier and blueprint, then made preservation guidance smarter for tests and fixtures so contracts and harness material are treated differently, verified it locally with 24 passing tests, and refreshed the `superpowers` outputs on the current PR branch.

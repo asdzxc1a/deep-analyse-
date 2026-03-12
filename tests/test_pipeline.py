@@ -193,7 +193,12 @@ def test_architecture_and_preservation_use_repo_map() -> None:
     assert decisions["README.md"].decision == "rewrite-with-differentiation"
     assert decisions["skills/example/SKILL.md"].decision == "rewrite-equivalent"
     assert decisions["src/server.js"].decision == "preserve-core-behavior"
-    assert decisions["tests/test_example.py"].decision == "preserve-core-behavior"
+    assert decisions["tests/test_example.py"].decision == "preserve-verification-contract"
+    assert decisions["tests/test_example.py"].artifact_role == "contract-bearing verification"
+    assert "verification intent" in decisions["tests/test_example.py"].strategy_note.lower()
+    assert decisions["tests/fixtures/sample-output.md"].decision == "adapt-test-fixture"
+    assert decisions["tests/fixtures/sample-output.md"].artifact_role == "test-support fixture"
+    assert "adapt" in decisions["tests/fixtures/sample-output.md"].strategy_note.lower()
     assert decisions["scripts/start-example.sh"].artifact_role == "behavior-bearing implementation"
     assert decisions["skills/example/SKILL.md"].legal_review == "recommended"
     assert decisions["src/server.js"].confidence == "medium"
@@ -294,10 +299,17 @@ def test_write_blueprint_repo_creates_starter_structure(tmp_path: Path) -> None:
     )
     assert "skills/example/SKILL.md" in preservation_text
     assert "rewrite-equivalent" in preservation_text
+    assert "preserve-verification-contract" in preservation_text
+    assert "adapt-test-fixture" in preservation_text
     assert "Role" in preservation_text
     assert "Legal Review" in preservation_text
     assert "Confidence" in preservation_text
     assert "Strategy Note" in preservation_text
+    reconstruction_plan_text = (blueprint_dir / "docs" / "reconstruction-plan.md").read_text(
+        encoding="utf-8"
+    )
+    assert "verification contracts" in reconstruction_plan_text
+    assert "fixtures" in reconstruction_plan_text
     workflow_pattern_text = (blueprint_dir / "docs" / "workflow-patterns.md").read_text(
         encoding="utf-8"
     )

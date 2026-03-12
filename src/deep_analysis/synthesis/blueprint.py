@@ -48,7 +48,9 @@ def write_blueprint_repo(
             "1. Start with preserved structure and interfaces.\n"
             "2. Rewrite workflow-language artifacts into your own voice.\n"
             "3. Preserve the repo workflow patterns captured in `docs/workflow-patterns.md` while rebuilding operator behavior.\n"
-            "4. Build implementation slices guided by the preservation matrix.\n"
+            "4. Preserve verification contracts from tests, but allow the rebuilt harness, assertions framework, and test layout to change.\n"
+            "5. Adapt fixtures and sample verification data to the rebuilt system instead of carrying them over blindly.\n"
+            "6. Build implementation slices guided by the preservation matrix.\n"
         ),
     )
     pattern_lines = ["# Workflow Patterns", ""]

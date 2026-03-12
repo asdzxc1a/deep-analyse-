@@ -32,7 +32,11 @@ def analyze_preservation(repo_root: Path, repo_map: RepoMap) -> PreservationRepo
 
 
 def _classify_artifact_role(path: str, artifact_type: ArtifactType) -> str:
-    if artifact_type in {ArtifactType.CODE, ArtifactType.SCRIPT, ArtifactType.TEST, ArtifactType.HOOK}:
+    if _is_test_fixture(path):
+        return "test-support fixture"
+    if artifact_type is ArtifactType.TEST:
+        return "contract-bearing verification"
+    if artifact_type in {ArtifactType.CODE, ArtifactType.SCRIPT, ArtifactType.HOOK}:
         return "behavior-bearing implementation"
     if artifact_type in {ArtifactType.CI, ArtifactType.CONFIG}:
         return "environment-coupled operations"
@@ -50,6 +54,10 @@ def _choose_decision(path: str, artifact_type: ArtifactType, artifact_role: str)
         return "rewrite-with-differentiation"
     if artifact_role in {"human-facing workflow system", "human-facing workflow reference"}:
         return "rewrite-equivalent"
+    if artifact_role == "contract-bearing verification":
+        return "preserve-verification-contract"
+    if artifact_role == "test-support fixture":
+        return "adapt-test-fixture"
     if artifact_role == "environment-coupled operations":
         return "preserve-with-review"
     if artifact_role == "behavior-bearing implementation":
@@ -62,6 +70,10 @@ def _build_strategy_note(artifact_role: str, decision: str) -> str:
         return "Preserve the product role, but intentionally differentiate the language, framing, and positioning."
     if decision == "rewrite-equivalent":
         return "Preserve the operator workflow and system intent, but rewrite the wording into your own voice."
+    if decision == "preserve-verification-contract":
+        return "Preserve the verification intent, expected assertions, and covered contract, but allow the rebuilt test harness to change."
+    if decision == "adapt-test-fixture":
+        return "Adapt fixture content and sample data to the rebuilt system while preserving only the verification purpose they support."
     if decision == "preserve-with-review":
         return "Preserve the operational role, but review environment assumptions and coupling before reuse."
     if artifact_role == "behavior-bearing implementation":
@@ -74,6 +86,8 @@ def _determine_legal_review(artifact_role: str, decision: str) -> str:
         return "required-before-reuse"
     if artifact_role in {"human-facing workflow system", "human-facing workflow reference"}:
         return "recommended"
+    if artifact_role in {"contract-bearing verification", "test-support fixture"}:
+        return "not-usually-needed"
     if artifact_role == "environment-coupled operations":
         return "recommended"
     return "not-usually-needed"
@@ -81,6 +95,8 @@ def _determine_legal_review(artifact_role: str, decision: str) -> str:
 
 def _determine_confidence(artifact_type: ArtifactType, decision: str) -> str:
     if artifact_type in {ArtifactType.SKILL, ArtifactType.PROMPT, ArtifactType.DOC}:
+        return "high"
+    if artifact_type is ArtifactType.TEST:
         return "high"
     if decision == "preserve-core-behavior":
         return "medium"
@@ -97,6 +113,16 @@ def _build_rationale(path: str, artifact_role: str, decision: str) -> str:
         return (
             f"{path} carries human-facing workflow semantics. Preserve the process and intent, but re-express the text "
             "in your own language."
+        )
+    if decision == "preserve-verification-contract":
+        return (
+            f"{path} verifies expected behavior rather than defining product behavior. Preserve the assertions and "
+            "covered contract, but allow the rebuilt system to use a different harness or test structure."
+        )
+    if decision == "adapt-test-fixture":
+        return (
+            f"{path} supports verification as fixture or sample reference data. Adapt it to the rebuilt system's data, "
+            "formats, and naming rather than preserving the source material verbatim."
         )
     if decision == "preserve-with-review":
         return (
@@ -119,5 +145,18 @@ def _is_strategy_doc(path: str) -> bool:
             "release_notes",
             "positioning",
             "marketing",
+        )
+    )
+
+
+def _is_test_fixture(path: str) -> bool:
+    normalized = path.lower()
+    return any(
+        token in normalized
+        for token in (
+            "/fixtures/",
+            "fixture",
+            "snapshot",
+            "golden",
         )
     )
