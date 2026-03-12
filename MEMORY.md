@@ -133,6 +133,38 @@ In practical terms, it is already good for:
 
 It is not finished yet, but it is already beyond MVP scaffolding and can produce genuinely useful analysis outputs.
 
+## Planned V2 Upgrade
+
+The next planned major upgrade is to move from:
+- reconstruction system
+
+to:
+- reconstruction plus domain-translation system
+
+This v2 is designed so the repo can analyze something like `superpowers` and generate a target-aware rebuild contract for a new domain such as marketing.
+
+Planned new capabilities:
+- doctrine extraction
+- role-system and handoff extraction
+- artifact equivalence mapping
+- target-domain translation planning
+- target-aware blueprint docs and starter structure
+
+Planned docs for this work:
+- `docs/specs/2026-03-12-domain-translation-v2-design.md`
+- `docs/plans/2026-03-12-domain-translation-v2.md`
+
+Planned CLI shape:
+
+```bash
+python -m deep_analysis.cli analyze \
+  https://github.com/obra/superpowers.git \
+  /tmp/superpowers-marketing \
+  --export-skill-pack \
+  --target-domain marketing \
+  --vision-file tests/fixtures/marketing_vision.md
+```
+
 ## Current Implementation Status
 
 The system is no longer just scaffold output. It now generates real dossier pages and workflow pages.
