@@ -13,6 +13,7 @@ required_files=(
   "$ROOT/first-2-week-plan.md"
   "$ROOT/production-board-weeks-1-2.md"
   "$ROOT/cold-audience-concept-board-v1.md"
+  "$ROOT/cold-audience-concept-board-v2-deep-analysis.md"
   "$ROOT/scripted-shooting-boards-top-5.md"
 )
 
@@ -46,6 +47,9 @@ assert_contains "$ROOT/first-2-week-plan.md" "Week 2"
 assert_contains "$ROOT/first-2-week-plan.md" "attitude moment"
 assert_contains "$ROOT/cold-audience-concept-board-v1.md" "interrupt"
 assert_contains "$ROOT/cold-audience-concept-board-v1.md" "luxury payoff"
+assert_contains "$ROOT/cold-audience-concept-board-v2-deep-analysis.md" "she made couture feel alive again"
+assert_contains "$ROOT/cold-audience-concept-board-v2-deep-analysis.md" "The Five Viewer Reactions That Build Empires"
+assert_contains "$ROOT/cold-audience-concept-board-v2-deep-analysis.md" "The Character Must Have at Least Four Modes"
 assert_contains "$ROOT/production-board-weeks-1-2.md" "Shoot Block"
 assert_contains "$ROOT/production-board-weeks-1-2.md" "Board Reference"
 assert_contains "$ROOT/scripted-shooting-boards-top-5.md" "Opening Line"

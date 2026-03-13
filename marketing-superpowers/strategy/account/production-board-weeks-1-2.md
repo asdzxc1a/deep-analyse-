@@ -1,5 +1,15 @@
 # Production Board: Weeks 1-2
 
+## Status
+
+This is the first-pass execution board from the earlier cold-audience layer.
+
+It is still useful for structure and batching, but it does not yet fully reflect the current mythic-couture thesis:
+- she made couture feel alive again
+
+Before the next real shoot cycle, rebuild these schedule entries against:
+- `cold-audience-concept-board-v2-deep-analysis.md`
+
 This file is the schedule-level production overview.
 
 Use it with:

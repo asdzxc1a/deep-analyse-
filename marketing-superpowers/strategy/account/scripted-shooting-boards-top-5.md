@@ -1,5 +1,21 @@
 # Scripted Shooting Boards: Top 5
 
+## Status
+
+These boards are the first scripted execution pass.
+
+They are useful as reference for pacing, framing, and structure, but they were written before the full mythic-couture creative reset became official.
+
+Use them as:
+- a structural reference
+- a proof of how detailed the execution layer should be
+
+Do not treat them as the final creative standard for the next shoot cycle.
+
+The next rewrite should be driven by:
+- `cold-audience-concept-board-v2-deep-analysis.md`
+- the master thesis: `she made couture feel alive again`
+
 These are the first five production-ready boards selected from the cold-audience concept layer.
 
 Each board is built to work for a cold audience first:
