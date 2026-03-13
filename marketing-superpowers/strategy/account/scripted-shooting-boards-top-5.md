@@ -1,270 +1,303 @@
 # Scripted Shooting Boards: Top 5
 
-## Status
+## Thesis
 
-These boards are the first scripted execution pass.
+These are the first five scripted boards built for the official reset:
+- she made couture feel alive again
 
-They are useful as reference for pacing, framing, and structure, but they were written before the full mythic-couture creative reset became official.
+Each board must do more than reveal a look.
 
-Use them as:
-- a structural reference
-- a proof of how detailed the execution layer should be
+It must make the fashion world feel:
+- younger
+- stranger
+- more emotional
+- more watchable
 
-Do not treat them as the final creative standard for the next shoot cycle.
+Each board should trigger at least two of these viewer reactions:
+- Recognition
+- Aspiration
+- Protective Tenderness
+- Surprise
+- Incompleteness
 
-The next rewrite should be driven by:
-- `cold-audience-concept-board-v2-deep-analysis.md`
-- the master thesis: `she made couture feel alive again`
-
-These are the first five production-ready boards selected from the cold-audience concept layer.
-
-Each board is built to work for a cold audience first:
-- interrupt
-- tension
-- character
-- luxury payoff
-
-## Board 1: She Refused Everything
+## Board 1: Day 1 - The Audition
 
 **Primary Use**
 - TikTok first
 - Instagram Reel second
 
 **Objective**
-- create immediate tension through refusal
-- make the audience wait for the one look she silently approves
+- introduce her as a real child with authority, weird logic, and accidental brilliance
+
+**Mythic Claim**
+- couture woke up because she walked into it like it needed her
 
 **Opening Line**
-- "She said no to every single look."
+- "Ask her about fashion like she already owns the answer."
 
 **First 3 Seconds**
-- 0.0-0.8s: close shot of her pushing one hanger away with a sharp face
-- 0.8-1.8s: fast cut to a second refusal with side-eye
-- 1.8-3.0s: third refusal, then a half-second pause on her suddenly going still
+- 0.0-1.0s: she walks into frame as if she is late to an audition she already won
+- 1.0-2.0s: off-camera question hits; she answers with complete certainty
+- 2.0-3.0s: she mispronounces something elegant and does not care at all
 
 **Shot List**
-1. rack of 3-4 outfit choices in frame
-2. hand or face rejection of look one
-3. rejection of look two with bigger attitude
-4. micro-pause on her noticing the final look
-5. close detail of the chosen luxury piece
-6. fast prep moment: shoe, sleeve, accessory, hair
-7. reveal walk with direct eye contact
-8. final still frame where she gives no smile, only control
+1. threshold entrance with sunglasses going on or coming off
+2. medium shot answering the first off-camera question
+3. close-up on a charming wrong phrase or mispronunciation
+4. cutaway of mother/stylist listening without interrupting
+5. detail of the look while she keeps talking casually
+6. wider frame where the outfit is visible but she is still the center
+7. final look into lens that says she has moved on before the audience has
 
 **Edit Rhythm**
-- first second: cut every 0.4-0.6s
-- tension section: 0.6-0.8s cuts with one deliberate pause before the chosen look
-- payoff section: 0.8-1.2s shots so the luxury reveal lands cleanly
-- total target length: 10-13s
-
-**Caption**
-- "Not every look earns her approval."
-
-**Cover Text**
-- "She Rejected Every Look"
-
-**Platform Variation**
-- TikTok: keep the first rejection as the opening frame and add a sharper sound hit on the pause
-- Instagram Reel: slightly cleaner cut order, stronger cover frame, less sound-led chaos
-- YouTube Short alt: add one extra prep beat and let the pause before the chosen look breathe
-
-**Why It Should Work**
-- refusal is faster than explanation
-- the audience gets a clean curiosity loop
-- the final silent approval makes the reveal feel earned
-
-## Board 2: This Should Not Become A Luxury Look
-
-**Primary Use**
-- TikTok first
-- Instagram Reel secondary
-
-**Objective**
-- open with maximum mismatch so the reveal feels almost impossible
-
-**Opening Line**
-- "This was never supposed to turn into that look."
-
-**First 3 Seconds**
-- 0.0-1.0s: chaotic movement, wrong angle, playful mess, almost anti-fashion framing
-- 1.0-2.0s: freeze or half-beat where the audience realizes this is the setup
-- 2.0-3.0s: flash of one expensive detail without full reveal
-
-**Shot List**
-1. untamed opening movement, half out of frame on purpose
-2. messy shoe or jacket moment
-3. sharp look to camera as if she knows the setup is wrong
-4. insert of premium texture or accessory
-5. transition move: turn, jump, or whip-pan
-6. full luxury reveal in a cleaner setting
-7. mid-shot walk or pose with rebellious posture
-8. closing detail on the most expensive-looking element
-
-**Edit Rhythm**
-- opening: intentionally abrupt, 0.3-0.5s cuts
-- middle tension: one 0.8s hold on the detail tease
-- reveal: 1.0s entrance, then two 0.7s clean fashion frames
-- total target length: 9-12s
-
-**Caption**
-- "The beginning was the trick."
-
-**Cover Text**
-- "This Should Not Work"
-
-**Platform Variation**
-- TikTok: lean harder into the wrong-feeling opening and quicker cuts
-- Instagram Reel: keep the messy opening but improve color and composition for the reveal
-- YouTube Short alt: add a prep voice moment or audible reaction before the reveal turn
-
-**Why It Should Work**
-- impossibility holds attention
-- the tease of one luxury detail increases payoff hunger
-- the contrast feels less decorative and more story-driven
-
-## Board 3: She Acts Like The Reveal Is Not A Big Deal
-
-**Primary Use**
-- Instagram Reel first
-- TikTok alt
-
-**Objective**
-- make the emotional mismatch the hook: huge look, tiny reaction
-
-**Opening Line**
-- "Her reaction was the coldest part of the whole reveal."
-
-**First 3 Seconds**
-- 0.0-1.2s: partial reveal of the finished look from behind or from detail-only framing
-- 1.2-2.0s: cut to her face with almost no reaction
-- 2.0-3.0s: a slow glance or tiny shrug that feels too casual for the glamour level
-
-**Shot List**
-1. luxe detail close-up: shoe, hem, jewelry, or fabric
-2. half-turn revealing more of the look
-3. face shot with no smile and no obvious excitement
-4. wide reveal frame
-5. deadpan walk past the camera
-6. pause pose where she looks away instead of selling the look
-7. final direct look into lens
-
-**Edit Rhythm**
-- open cleaner than TikTok: 0.7-0.9s shots
-- let the non-reaction sit for one full beat
-- reveal section should stay elegant, not chaotic
-- total target length: 8-11s
-
-**Caption**
-- "As if this look was just another Tuesday."
-
-**Cover Text**
-- "She Did Not React"
-
-**Platform Variation**
-- Instagram Reel: treat the deadpan reaction as the hero moment and keep the grade polished
-- TikTok: start with the face reaction first, then flash the reveal for a stronger immediate pattern break
-- YouTube Short alt: add one pre-reveal setup beat showing everyone else expecting a bigger reaction
-
-**Why It Should Work**
-- anti-reaction is less predictable than excitement
-- it keeps her personality central
-- it makes the luxury feel even bigger because she acts above it
-
-## Board 4: The Luxury Store Was Not Ready For Her
-
-**Primary Use**
-- TikTok + Instagram Reel
-- YouTube Short support cut
-
-**Objective**
-- turn the environment into a secondary character and let her dominate it
-
-**Opening Line**
-- "The store looked expensive. She looked dangerous."
-
-**First 3 Seconds**
-- 0.0-1.0s: wide entrance into a luxury space with too much confidence for her size
-- 1.0-2.0s: one curious or bold touchpoint, glance, or turn
-- 2.0-3.0s: quick cut to a premium detail that ties the space to the final look
-
-**Shot List**
-1. entrance shot from farther back for scale contrast
-2. mid-shot of her walking without hesitation
-3. close face shot with curious control or side-eye
-4. environmental luxury detail
-5. fitting, mirror, or styling transition beat
-6. final look reveal inside or just outside the location
-7. power walk or still pose that makes the location feel smaller
-8. closing wide shot with the full silhouette
-
-**Edit Rhythm**
-- let the entrance breathe slightly more than home/studio posts
-- use 0.7-1.0s cuts to keep location readable
-- hold the closing silhouette for one extra beat
+- first 1.5s should feel immediate and conversational
+- keep the first answer under 1.2s
+- let the mispronunciation land for half a beat longer than feels safe
 - total target length: 11-15s
 
 **Caption**
-- "Some places are too quiet for her energy."
+- "She answered like couture had been waiting for her."
 
 **Cover Text**
-- "The Store Was Not Ready"
+- "The Audition"
 
 **Platform Variation**
-- TikTok: open on the wide entrance and get to side-eye by second two
-- Instagram Reel: tighten the location shots and prioritize the strongest silhouette frame
-- YouTube Short alt: include one extra setup shot showing the environment before she enters
+- TikTok: lead with the funniest line and keep the pacing sharper
+- Instagram Reel: let the threshold and full look breathe slightly more
+- YouTube Short alt: include one extra off-camera question for world-building
+
+**Psychology**
+- Recognition: she talks like a real kid, not a finished brand object
+- Protective Tenderness: the wrong-but-confident phrase makes her impossible not to love
+- Aspiration: complete comfort in her own logic is magnetic
 
 **Why It Should Work**
-- location adds status tension instantly
-- scale mismatch is naturally watchable
-- the final silhouette makes the luxury payoff feel complete
+- the audience meets a person, not a concept
+- the off-camera voice makes the world feel inhabited
+- the look lands, but the real payoff is her total lack of intimidation
 
-## Board 5: Rebel Kid, Editorial Ending
+## Board 2: Day 2 - She Noticed Something You Did Not
 
 **Primary Use**
 - Instagram Reel first
-- YouTube Short second
+- TikTok second
 
 **Objective**
-- begin in maximum chaos and end in a frame that feels magazine-level without losing life
+- prove that beauty pulls her in and that she has a real eye
+
+**Mythic Claim**
+- couture became alive the moment she noticed the detail everyone else missed
 
 **Opening Line**
-- "She started like trouble and ended like a cover."
+- "She stopped the whole room for one detail nobody else saw."
 
 **First 3 Seconds**
-- 0.0-1.0s: fast, noisy, playful movement that feels impossible to control
-- 1.0-2.0s: sharp eye contact or freeze that resets the mood
-- 2.0-3.0s: flash of one editorial frame, not the full reveal
+- 0.0-1.2s: close-up of her face noticing something off-camera
+- 1.2-2.2s: cut to her fingers near the detail, not touching it yet
+- 2.2-3.0s: tiny head tilt, half-fascinated and half-suspicious
 
 **Shot List**
-1. open with motion, laughter, spin, jump, or off-script gesture
-2. cut to a direct stare that changes the energy
-3. detail of a couture-like element
-4. transition move into composed styling
-5. first full reveal frame
-6. editorial walk or pose sequence
-7. closer fashion frame for texture and control
-8. final still image with magazine-level composition
+1. face close-up with quiet curiosity
+2. the detail itself: fabric, light, texture, or color clash
+3. her hand entering frame carefully
+4. mother/stylist glance that sees she has found something
+5. her silent judgment: nod, look, or tiny rejection
+6. styling transition built around the detail
+7. full look reveal with the chosen detail made central
+8. final glance back at the original source of beauty
 
 **Edit Rhythm**
-- first 1.5s should feel wild and fast
-- middle reset needs one decisive pause
-- ending should slow down into cleaner editorial pacing
+- open slower than a typical reveal post
+- let the noticing beat sit for 0.8-1.0s
+- keep the payoff elegant and clear, not frantic
 - total target length: 10-14s
 
 **Caption**
-- "Wild first. Editorial by the end."
+- "She sees the part that changes everything."
 
 **Cover Text**
-- "Trouble To Cover Girl"
+- "She Noticed It First"
 
 **Platform Variation**
-- Instagram Reel: make the final still frame the cover and protect the clean ending
-- TikTok alt: shorten the editorial ending slightly and emphasize the reset beat
-- YouTube Short: keep one extra pre-reveal chaos beat and one extra final frame for emotional release
+- Instagram Reel: hold on the face and detail longer for mood
+- TikTok: open with the question, "what did she see?"
+- YouTube Short alt: add one extra beat of trial and error before the look resolves
+
+**Psychology**
+- Surprise: viewers expect a standard reaction, but get taste and attention instead
+- Protective Tenderness: the seriousness of her fascination is deeply moving
+- Incompleteness: it makes the audience wonder what else she notices that adults miss
 
 **Why It Should Work**
-- motion-to-composure is inherently satisfying
-- the reset beat creates a real transition instead of a generic before-and-after
-- the ending supports authority without becoming stiff
+- it shifts her from model to observer
+- beauty becomes story, not decoration
+- the audience starts trusting her eye
+
+## Board 3: Day 3 - The Reject Pile
+
+**Primary Use**
+- TikTok first
+- Instagram Reel second
+
+**Objective**
+- create a recurring bit with quotable language and immediate character memory
+
+**Mythic Claim**
+- she made fashion feel alive by refusing dead choices in her own strange language
+
+**Opening Line**
+- "She rejected it for reasons only she would understand."
+
+**First 3 Seconds**
+- 0.0-0.8s: one item lands on the floor
+- 0.8-1.8s: she dismisses it with a weird one-liner
+- 1.8-3.0s: second rejection hits even harder and the reject pile becomes visible
+
+**Shot List**
+1. visible reject pile from the start
+2. her hand or face rejecting look one
+3. line delivery for the first absurd reason
+4. second or third rejection with a stronger reason
+5. mother/stylist off-camera reaction or half-laugh
+6. moment where one piece almost makes it
+7. final chosen piece lifted out with unexpected seriousness
+8. quick reveal built around the winner
+
+**Edit Rhythm**
+- first 3 seconds should contain at least two rejections
+- each reason should be short enough to quote in comments
+- leave one micro-pause before the chosen piece
+- total target length: 12-16s
+
+**Caption**
+- "If it smells like Tuesday, it goes."
+
+**Cover Text**
+- "The Reject Pile"
+
+**Platform Variation**
+- TikTok: keep the funniest reasons front-loaded
+- Instagram Reel: choose the visually strongest rejected pieces and cleaner subtitles
+- YouTube Short alt: include one extra “almost yes” fake-out
+
+**Psychology**
+- Recognition: everyone has rejected things for irrational reasons
+- Surprise: the reasons are more memorable than the clothes
+- Aspiration: having taste that feels personal and unteachable is magnetic
+
+**Why It Should Work**
+- it gives the account shared language
+- it creates a recurring object-story the audience can track
+- it makes fashion feel less dead and more subjective
+
+## Board 4: Day 5 - The Wrong Soundtrack
+
+**Primary Use**
+- TikTok + Instagram Reel
+
+**Objective**
+- make couture feel alive by letting child energy and luxury visuals clash beautifully
+
+**Mythic Claim**
+- she brought life back into couture by refusing to sound the way the image expected
+
+**Opening Line**
+- "The look said couture. The soundtrack said playground."
+
+**First 3 Seconds**
+- 0.0-1.0s: fully styled frame lands first
+- 1.0-2.0s: her off-key humming or whispered self-talk starts
+- 2.0-3.0s: she keeps walking like the mismatch is completely natural
+
+**Shot List**
+1. immediate polished reveal
+2. closer shot that confirms the audio is really her
+3. walk or turn where the sound keeps going
+4. mother/stylist or off-camera presence staying quiet rather than correcting
+5. one tiny laugh or self-directed comment
+6. full-body couture frame with childish audio still continuing
+7. final still frame where the contrast is most obvious
+
+**Edit Rhythm**
+- open with image first, audio second
+- let the mismatch register before cutting fast
+- do not over-edit the middle; the discomfort is the hook
+- total target length: 9-13s
+
+**Caption**
+- "Couture looked better when she stopped acting like it was sacred."
+
+**Cover Text**
+- "The Wrong Soundtrack"
+
+**Platform Variation**
+- TikTok: make the humming arrive as early as possible
+- Instagram Reel: preserve a cleaner visual finish while keeping the audio mismatch intact
+- YouTube Short alt: add one extra prep beat where she starts humming before the frame reveals the full look
+
+**Psychology**
+- Recognition: this is what real confidence looks like, not adult-approved polish
+- Protective Tenderness: a child humming through a luxury moment is deeply endearing
+- Surprise: the audio-visual contradiction makes the frame feel alive
+
+**Why It Should Work**
+- it destroys stiffness instantly
+- it makes the image watchable because it is slightly “wrong”
+- it proves she is still a child inside the styling
+
+## Board 5: Day 7 - She Teaches You Something (And Gets It Slightly Wrong)
+
+**Primary Use**
+- TikTok first
+- Instagram Reel second
+
+**Objective**
+- turn her from a visual subject into someone with a worldview and quotable taste logic
+
+**Mythic Claim**
+- couture became alive because she explained it through instinct instead of rules
+
+**Opening Line**
+- "Okay. Listen. This is how it works."
+
+**First 3 Seconds**
+- 0.0-1.0s: direct eye contact, no smile, complete seriousness
+- 1.0-2.0s: she says a rule that is half-wrong and totally convincing
+- 2.0-3.0s: visual proof begins immediately on her outfit
+
+**Shot List**
+1. front-facing direct address
+2. the first “rule” line with subtitle
+3. cut to the garment or color she is defending
+4. second line that gets stranger but more interesting
+5. off-camera adult holding silence instead of correcting
+6. full outfit proof shot
+7. close-up where she adjusts something like a final authority move
+8. closing lens look that ends the lesson
+
+**Edit Rhythm**
+- the first line must land by second one
+- keep each rule short and quotable
+- alternate direct address with proof shots
+- total target length: 12-16s
+
+**Caption**
+- "Her rules are not normal. That is the point."
+
+**Cover Text**
+- "She Made The Rule"
+
+**Platform Variation**
+- TikTok: use the strangest line first
+- Instagram Reel: clean subtitle styling and stronger proof shots
+- YouTube Short alt: include one extra rule and one gentle adult reaction off-camera
+
+**Psychology**
+- Recognition: everyone has private rules they cannot fully explain
+- Aspiration: she sounds like someone whose instinct outruns formal knowledge
+- Protective Tenderness: being slightly wrong makes the certainty lovable, not fake
+
+**Why It Should Work**
+- it makes her worth listening to
+- it creates quote material for comments and reposts
+- it turns fashion into language, not only visuals

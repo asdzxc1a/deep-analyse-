@@ -1,123 +1,141 @@
 # Production Board: Weeks 1-2
 
-## Status
+## Creative North Star
 
-This is the first-pass execution board from the earlier cold-audience layer.
-
-It is still useful for structure and batching, but it does not yet fully reflect the current mythic-couture thesis:
+Every scheduled post in this cycle should prove one thesis:
 - she made couture feel alive again
 
-Before the next real shoot cycle, rebuild these schedule entries against:
+The first two weeks are not just a posting calendar.
+
+They are the opening season of her fashion world:
+- she resists entering
+- the mother/stylist opens the door quietly
+- beauty catches her anyway
+- the world becomes more alive because she entered it wrong
+
+Use this file with:
 - `cold-audience-concept-board-v2-deep-analysis.md`
-
-This file is the schedule-level production overview.
-
-Use it with:
-- `cold-audience-concept-board-v1.md` for the concept bank
-- `scripted-shooting-boards-top-5.md` for the exact execution details
+- `scripted-shooting-boards-top-5.md`
 
 ## Shoot Blocks
 
-### Shoot Block A: Studio / Home Contrast Set
+### Shoot Block A: The Entrance World
 
 Purpose:
-- batch the fastest cold-audience transformation assets
-- capture refusal, chaos, and luxury-payoff material
+- establish the threshold ritual
+- capture direct-to-camera authority
+- introduce her as a child who changes the mood of couture
 
-Primary boards:
-- Board 1: She Refused Everything
-- Board 2: This Should Not Become A Luxury Look
-- Board 3: She Acts Like The Reveal Is Not A Big Deal
+Primary episodes:
+- Day 1: The Audition
+- Day 7: She Teaches You Something (And Gets It Slightly Wrong)
 
-### Shoot Block B: Luxury Location Set
-
-Purpose:
-- use environment as status tension
-- capture dominance, scale mismatch, and location-driven payoff
-
-Primary boards:
-- Board 4: The Luxury Store Was Not Ready For Her
-
-### Shoot Block C: Editorial End Set
+### Shoot Block B: The Detail World
 
 Purpose:
-- capture the strongest magazine-style finish after chaotic personality opening
+- capture fascination
+- show that she notices beauty before she performs it
+- give the audience a reason to care about her eye, not only her outfits
 
-Primary boards:
-- Board 5: Rebel Kid, Editorial Ending
+Primary episodes:
+- Day 2: She Noticed Something You Did Not
+- Day 11: She Found Something
+
+### Shoot Block C: The Reject World
+
+Purpose:
+- build the first recurring object story
+- create shared language and a repeatable bit
+
+Primary episodes:
+- Day 3: The Reject Pile
+- Day 6: The Reject Pile Fights Back
+- Day 10: The Reject Pile Gets A Funeral
+
+### Shoot Block D: The Emotional Break World
+
+Purpose:
+- prove she is a person, not a costume
+- add silence, resistance, and emotional variation
+
+Primary episodes:
+- Day 4: She Got Quiet
+- Day 5: The Wrong Soundtrack
+- Day 9: She Does Not Want To Do This Today
 
 ## Week 1
 
 ### Post 1
 
 - Platform: TikTok + Instagram Reel
-- Board Reference: Board 1
+- Board Reference: Day 1 - The Audition
 - Shoot Block: A
-- Objective: open the cycle with refusal-based tension and a fast luxury payoff
-- Batch Notes: shoot extra refusal reactions and one alternate reveal ending for cutdowns
+- Objective: introduce her as someone who makes couture feel alive through confidence, mischief, and accidental charm
+- Batch Notes: capture two interview versions, one cleaner and one slightly more chaotic
 
 ### Post 2
 
-- Platform: TikTok
-- Board Reference: Board 2
-- Shoot Block: A
-- Objective: push the “impossible transformation” angle harder for cold audience retention
-- Batch Notes: capture one extra messy opening and one extra final-walk shot
+- Platform: Instagram Reel
+- Board Reference: Day 2 - She Noticed Something You Did Not
+- Shoot Block: B
+- Objective: prove she has taste and fascination, not just attitude
+- Batch Notes: capture three detail-fixation options so the best noticing moment can lead the cut
 
 ### Post 3
 
-- Platform: Instagram Reel
-- Board Reference: Board 3
-- Shoot Block: A
-- Objective: give Instagram a cleaner but still emotionally sharp anti-reaction reveal
-- Batch Notes: pull stills from the final look for cover testing
+- Platform: TikTok
+- Board Reference: Day 3 - The Reject Pile
+- Shoot Block: C
+- Objective: begin the running bit and create a quotable shared-language moment
+- Batch Notes: collect at least six rejection lines even if only three make the final edit
 
 ### Post 4
 
-- Platform: YouTube Short
-- Board Reference: Board 5
-- Shoot Block: C
-- Objective: deliver a more cinematic editorial finish while keeping her rebel energy visible
-- Batch Notes: capture one longer pacing version for future YouTube story expansion
+- Platform: Instagram Reel + YouTube Short
+- Board Reference: Day 4 - She Got Quiet
+- Shoot Block: D
+- Objective: interrupt the expected energy pattern with stillness and presence
+- Batch Notes: record multiple silent takes with slightly different eye lines
 
 ## Week 2
 
 ### Post 1
 
 - Platform: TikTok + Instagram Reel
-- Board Reference: Board 4
-- Shoot Block: B
-- Objective: use a luxury location to create stronger status tension and broader curiosity
-- Batch Notes: capture wide entrance, detail shots, and one alternate silent opening
+- Board Reference: Day 5 - The Wrong Soundtrack
+- Shoot Block: D
+- Objective: make couture feel alive through audio-visual mismatch and childlike self-possession
+- Batch Notes: capture both humming and whispered self-talk versions
 
 ### Post 2
 
 - Platform: TikTok
-- Board Reference: Board 1 alt cut
-- Shoot Block: A
-- Objective: reuse the refusal mechanic with a faster, more chaotic edit for pure reach
-- Batch Notes: cut from Week 1 Shoot Block A footage if performance on the first post is promising
+- Board Reference: Day 6 - The Reject Pile Fights Back
+- Shoot Block: C
+- Objective: reward viewers who saw the earlier reject-pile episode and prove the account has memory
+- Batch Notes: shoot one version where she changes her mind quickly and one where she studies the piece first
 
 ### Post 3
 
-- Platform: Instagram Reel
-- Board Reference: Board 5
-- Shoot Block: C
-- Objective: reinforce recognizability through rebel-to-editorial contrast
-- Batch Notes: use the strongest still moment as the cover and keep pacing tighter than the Short
+- Platform: TikTok + Instagram Reel
+- Board Reference: Day 7 - She Teaches You Something (And Gets It Slightly Wrong)
+- Shoot Block: A
+- Objective: turn her into someone worth listening to, not only someone worth watching
+- Batch Notes: keep the explanation natural; do not over-correct imperfect wording
 
 ### Post 4
 
 - Platform: YouTube Short or Instagram Story support
-- Board Reference: Board 4 BTS cut
-- Shoot Block: B
-- Objective: show location tension, prep, and one behind-the-look beat without losing status
-- Batch Notes: keep this as a support asset, not the lead growth post of the week
+- Board Reference: Day 8 preview from the concept board or BTS cut from Day 7
+- Shoot Block: A support cut
+- Objective: set up the next phase of the world without diluting the first-week-to-second-week rhythm
+- Batch Notes: use only if the support footage strengthens continuity
 
 ## Execution Rules
 
-- Lead each week with the hardest interruptive post.
-- Do not post two soft luxury payoffs in a row.
-- If a board loses tension in the first second, cut it before posting.
-- Keep lifestyle footage only when it strengthens character or status tension.
-- Prioritize reuse from the same shoot block before adding a new production day.
+- The first second must carry a mythic promise, not just an outfit tease.
+- The tension should come from character or worldview, not only from reveal mechanics.
+- Each week must include at least one tenderness beat, one surprise beat, and one authority beat.
+- If a post has no quotable line, no still frame worth saving, and no emotional crack, it is not ready.
+- Keep the mother/stylist presence light but real enough that the world feels inhabited.
+- Preserve the sunglasses ritual whenever the episode benefits from a visible threshold into her world.
